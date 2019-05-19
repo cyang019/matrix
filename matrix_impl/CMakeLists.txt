@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.14)
 project(matrix)
 
 add_library(matrix INTERFACE)
@@ -15,6 +15,8 @@ if (APPLE)
     INTERFACE
     "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers"
     )
+
+  add_compile_definitions(WITH_VECLIB_CBLAS)
   #unset(matrix_LIB_DEPENDS CACHE)
 endif()
 

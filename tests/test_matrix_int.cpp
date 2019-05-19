@@ -4,7 +4,6 @@
 
 namespace {
     using MatrixI = matrix::Matrix<int>;
-    using MatrixCD = matrix::Matrix<std::complex<double>>; 
     TEST(TestMatrix, IntZero){
         MatrixI m(3,3);
         m.setZero();
@@ -85,18 +84,5 @@ namespace {
         EXPECT_EQ(7, m2(2,0));
         EXPECT_EQ(8, m2(2,1));
         EXPECT_EQ(9, m2(2,2));
-    }
-
-    TEST(TestMatrix, SetComplexZero){
-        MatrixCD m(2,2);
-        m.setZero();
-        ASSERT_DOUBLE_EQ(0.0, m(0,0).real());
-        ASSERT_DOUBLE_EQ(0.0, m(0,1).real());
-        ASSERT_DOUBLE_EQ(0.0, m(1,0).real());
-        ASSERT_DOUBLE_EQ(0.0, m(1,1).real());
-        ASSERT_DOUBLE_EQ(0.0, m(0,0).imag());
-        ASSERT_DOUBLE_EQ(0.0, m(0,1).imag());
-        ASSERT_DOUBLE_EQ(0.0, m(1,0).imag());
-        ASSERT_DOUBLE_EQ(0.0, m(1,1).imag());
     }
 }   // namespace
