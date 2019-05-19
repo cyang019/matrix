@@ -7,6 +7,7 @@
 #include <initializer_list>
 #include <complex>
 #include <random>
+#include "cblas.h"
 
 
 namespace matrix {

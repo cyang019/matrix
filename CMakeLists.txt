@@ -4,6 +4,8 @@ project (matrix CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(BUILD_TESTS "build unittests as well" ON)
+
 # Add sub-directories
 add_subdirectory(matrix_impl)
 
@@ -13,7 +15,9 @@ fetch_googletest(
   ${PROJECT_BINARY_DIR}/googletest
   )
 
-enable_testing()
-
-add_subdirectory(tests)
+if(BUILD_TESTS)
+  enable_testing()
+  
+  add_subdirectory(tests)
+endif()
 

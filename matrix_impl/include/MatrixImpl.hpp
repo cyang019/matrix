@@ -1,4 +1,4 @@
-amespace practice { inline namespace v1 {
+namespace matrix { inline namespace v1 {
     template<typename T>
     Matrix<T>::Matrix()
         : m_nrows(0), m_ncols(0), m_data(nullptr)
