@@ -44,8 +44,8 @@ endif()
 target_link_libraries(matrix INTERFACE cblas)
 target_include_directories(matrix
   INTERFACE
-  "${PROJECT_SOURCE_DIR}/matrix_impl/include"
   "${BLAS_INCLUDE_DIR}"
+  "${PROJECT_SOURCE_DIR}/matrix_impl/include"
 )
 
 include("include/CMakeLists.txt")

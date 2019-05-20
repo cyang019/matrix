@@ -56,6 +56,24 @@ namespace matrix { inline namespace v1 {
       }
     }
 
+    template<>
+    inline
+    Matrix<double>::Matrix(const Matrix<double> &rhs)
+        : m_nrows(rhs.m_nrows), m_ncols(rhs.m_ncols),
+        m_data(std::make_unique<double[]>(rhs.m_nrows * rhs.m_ncols))
+    {
+      cblas_dcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
+    }
+
+    template<>
+    inline
+    Matrix<cxdbl>::Matrix(const Matrix<cxdbl> &rhs)
+        : m_nrows(rhs.m_nrows), m_ncols(rhs.m_ncols),
+        m_data(std::make_unique<cxdbl[]>(rhs.m_nrows * rhs.m_ncols))
+    {
+      cblas_zcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
+    }
+
     template<typename T>
     Matrix<T>::Matrix(Matrix<T> &&rhs) noexcept
         : m_nrows(rhs.m_nrows), m_ncols(rhs.m_ncols),
@@ -170,11 +188,11 @@ namespace matrix { inline namespace v1 {
       if constexpr (std::is_floating_point<T>::value
               || std::is_integral<T>::value){
           for(size_t i = 0; i < m_nrows * m_ncols; ++i){
-              m_data[i] = 1;
+              m_data[i] = 1.0;
           }
       } else if constexpr(is_complex<T>::value){
           for(size_t i = 0; i < m_nrows * m_ncols; ++i){
-              m_data[i] = T(0,0);
+              m_data[i] = T(1.0,0);
           }
       } else {
           for(size_t i = 0; i < m_nrows * m_ncols; ++i){

@@ -1,6 +1,6 @@
 #include "Matrix.h"
 #include "gtest/gtest.h"
-#include <complex>
+#include <limits>
 
 namespace {
     using MatrixD = matrix::Matrix<double>; 
@@ -23,8 +23,15 @@ namespace {
       EXPECT_EQ(1, m(1,1));
     }
 
-    TEST(TestMatrix, DoublePlus){
+    TEST(TestMatrix, DoubleCopy){
       MatrixD d(2,2);
-
+      d.setOne();
+      // call ctor
+      MatrixD d2(d);
+      constexpr double eps = std::numeric_limits<double>::epsilon();
+      ASSERT_NEAR(1.0, d2(0,0), eps);
+      ASSERT_NEAR(1.0, d2(0,1), eps);
+      ASSERT_NEAR(1.0, d2(1,0), eps);
+      ASSERT_NEAR(1.0, d2(1,1), eps);
     }
 }

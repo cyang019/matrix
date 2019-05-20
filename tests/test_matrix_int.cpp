@@ -1,6 +1,5 @@
 #include "Matrix.h"
 #include "gtest/gtest.h"
-#include <complex>
 
 namespace {
     using MatrixI = matrix::Matrix<int>;
