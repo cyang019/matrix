@@ -9,6 +9,7 @@
 #include <random>
 #include "cblas.h"
 #include "common.h"
+#include "errors.h"
 
 // temperary
 #include <iostream>
@@ -16,56 +17,56 @@
 
 namespace matrix {
     inline namespace v1 {
-        //template<typename T>
-        //class Matrix;
+        template<typename T>
+        class Matrix;
 
-        // basic operations
-        // template<typename T>
-        // Matrix<T> operator+(const Matrix<T> &, const Matrix<T> &);
+        //basic operations
+        template<typename T>
+        Matrix<T> operator+(const Matrix<T> &, const Matrix<T> &);
 
-        //template<typename T>
-        //Matrix<T> operator+(const Matrix<T> &, const T &);
+        template<typename T>
+        Matrix<T> operator+(const Matrix<T> &, const T &);
 
-        //template<typename T>
-        //Matrix<T> operator+(const T&, const Matrix<T> &);
+        template<typename T>
+        Matrix<T> operator+(const T&, const Matrix<T> &);
 
-        // template<typename T>
-        // Matrix<T> operator-(const Matrix<T> &, const Matrix<T> &);
+        template<typename T>
+        Matrix<T> operator-(const Matrix<T> &, const Matrix<T> &);
 
-        //template<typename T>
-        //Matrix<T> operator-(const Matrix<T> &, const T &);
+        template<typename T>
+        Matrix<T> operator-(const Matrix<T> &, const T &);
 
-        //template<typename T>
-        //Matrix<T> operator-(const T&, const Matrix<T> &);
+        template<typename T>
+        Matrix<T> operator-(const T&, const Matrix<T> &);
 
-        // template<typename T>
-        // Matrix<T> operator*(const Matrix<T> &, const Matrix<T> &);
+        template<typename T>
+        Matrix<T> operator*(const Matrix<T> &, const Matrix<T> &);
 
-        //template<typename T>
-        //Matrix<T> operator*(const Matrix<T> &, const T &);
+        template<typename T>
+        Matrix<T> operator*(const Matrix<T> &, const T &);
 
-        //template<typename T>
-        //Matrix<T> operator*(const T&, const Matrix<T> &);
+        template<typename T>
+        Matrix<T> operator*(const T&, const Matrix<T> &);
 
-        //template<typename T>
-        //Matrix<T> operator/(const Matrix<T> &, const T &);
+        template<typename T>
+        Matrix<T> operator/(const Matrix<T> &, const T &);
 
-        //Matrix<cxdbl> exp(const Matrix<cxdbl> &);
+        Matrix<cxdbl> exp(const Matrix<cxdbl> &);
 
         // @brief: column major matrix type.
         template<typename T>
         class Matrix{
         public:
-            //friend Matrix<T> operator+<T>(const Matrix<T> &t_m1, const Matrix<T> &t_m2);
-            //friend Matrix<T> operator+<T>(const T &t_v1, const Matrix<T> &t_m2);
-            //friend Matrix<T> operator+<T>(const Matrix<T> &t_m1, const T &t_v2);
-            //friend Matrix<T> operator-<T>(const Matrix<T> &t_m1, const Matrix<T> &t_m2);
-            //friend Matrix<T> operator-<T>(const T &t_v1, const Matrix<T> &t_m2);
-            //friend Matrix<T> operator-<T>(const Matrix<T> &t_m1, const T &t_v2);
-            //friend Matrix<T> operator*<T>(const Matrix<T> &t_m1, const Matrix<T> &t_m2);
-            //friend Matrix<T> operator*<T>(const T &t_v1, const Matrix<T> &t_m2);
-            //friend Matrix<T> operator*<T>(const Matrix<T> &t_m1, const T &t_v2);
-            //friend Matrix<T> operator/<T>(const Matrix<T> &t_m1, const T &t_v2);
+            friend Matrix<T> operator+<T>(const Matrix<T> &t_m1, const Matrix<T> &t_m2);
+            friend Matrix<T> operator+<T>(const T &t_v1, const Matrix<T> &t_m2);
+            friend Matrix<T> operator+<T>(const Matrix<T> &t_m1, const T &t_v2);
+            friend Matrix<T> operator-<T>(const Matrix<T> &t_m1, const Matrix<T> &t_m2);
+            friend Matrix<T> operator-<T>(const T &t_v1, const Matrix<T> &t_m2);
+            friend Matrix<T> operator-<T>(const Matrix<T> &t_m1, const T &t_v2);
+            friend Matrix<T> operator*<T>(const Matrix<T> &t_m1, const Matrix<T> &t_m2);
+            friend Matrix<T> operator*<T>(const T &t_v1, const Matrix<T> &t_m2);
+            friend Matrix<T> operator*<T>(const Matrix<T> &t_m1, const T &t_v2);
+            friend Matrix<T> operator/<T>(const Matrix<T> &t_m1, const T &t_v2);
 
             Matrix();
             Matrix(size_t, size_t);
@@ -105,8 +106,11 @@ namespace matrix {
             Matrix<T> adjoint() const;
             Matrix<T>&& adjoint();
 
-            size_t rows() const;
-            size_t cols() const;
+            T* data();
+            const T* data() const;
+
+            size_t nrows() const;
+            size_t ncols() const;
         private:
             std::unique_ptr<T[]> m_data; ///< serialized matrix
             size_t m_nrows;
@@ -116,5 +120,8 @@ namespace matrix {
 }
 
 #include "MatrixImpl.hpp"
+
+#include "operators_impl.hpp"
+
 
 #endif

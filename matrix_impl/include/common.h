@@ -3,10 +3,13 @@
 
 #include <type_traits>
 #include <complex>
+#include <limits>
 
 namespace matrix {
   inline namespace v1 {
     using cxdbl = std::complex<double>;
+    constexpr double eps = std::numeric_limits<double>::epsilon();
+    constexpr int int_max = std::numeric_limits<int>::max();
 
     template <typename T> using static_not = std::integral_constant<bool, !T::value>;
 

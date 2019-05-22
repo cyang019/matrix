@@ -68,9 +68,9 @@ namespace {
 
     TEST(TestMatrix, AssignMat){
         MatrixI m1 = {{1,2,3}, {4,5,6}, {7,8,9}};
-        MatrixI m2(m1.rows(), m1.cols());
-        for(size_t i = 0; i < m2.rows(); ++i){
-            for(size_t j = 0; j < m2.cols(); ++j){
+        MatrixI m2(m1.nrows(), m1.ncols());
+        for(size_t i = 0; i < m2.nrows(); ++i){
+            for(size_t j = 0; j < m2.ncols(); ++j){
                 m2(i,j) = m1(i,j);
             }
         }

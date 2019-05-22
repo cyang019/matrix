@@ -18,17 +18,18 @@ namespace matrix { inline namespace v1 {
 
     template<typename T>
     Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> il)
-        : m_nrows(il.size())
+        : m_nrows(il.size()), m_ncols(0)
     {
       auto r_it = il.begin();
-      size_t ncols = 0;
       for(; r_it != il.end(); ++r_it){
-          if(r_it->size() > ncols){
-              ncols = r_it->size();
+          if(m_ncols == 0){
+            m_ncols = r_it->size();
+          }
+          else if(r_it->size() != m_ncols){
+            throw(MatrixColsSizeUnevenError("Initializer size error."));
           }
       }   ///< find number of columns
-      m_ncols = ncols;
-      m_data = std::make_unique<T[]>(il.size() * ncols);
+      m_data = std::make_unique<T[]>(m_nrows * m_ncols);
 
       size_t at_row = 0;
       r_it = il.begin();
@@ -146,6 +147,12 @@ namespace matrix { inline namespace v1 {
       return *this;
     }
 
+    template<>
+    inline
+    Matrix<double>& Matrix<double>::operator+=(const Matrix<double> &rhs)
+    {
+    }
+
     template<typename T>
     Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &rhs)
     {
@@ -250,28 +257,21 @@ namespace matrix { inline namespace v1 {
     }
 
     template<typename T>
-    size_t Matrix<T>::rows() const
+    T* Matrix<T>::data()
+    { return m_data.get(); }
+
+    template<typename T>
+    const T* Matrix<T>::data() const
+    { return m_data.get(); }
+
+    template<typename T>
+    size_t Matrix<T>::nrows() const
     { return m_nrows; }
 
     template<typename T>
-    size_t Matrix<T>::cols() const
+    size_t Matrix<T>::ncols() const
     { return m_ncols; }
 
-    template<typename T>
-    Matrix<T> operator+(const Matrix<T> &t_m1, const Matrix<T> &t_m2)
-    {
-      Matrix<T> m = t_m1;
-      m += t_m2;
-      return m;
-    }
-
-    template<typename T>
-    Matrix<T> operator-(const Matrix<T> &t_m1, const Matrix<T> &t_m2)
-    {
-      Matrix<T> m = t_m1;
-      m -= t_m2;
-      return m;
-    }
 
 } ///< inline namespace v1
 } ///< namespace matrix
