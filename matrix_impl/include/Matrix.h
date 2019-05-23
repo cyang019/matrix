@@ -72,6 +72,7 @@ namespace matrix {
             Matrix(size_t, size_t);
             Matrix(size_t);     ///< square matrix
             Matrix(std::initializer_list<std::initializer_list<T>> il);
+            Matrix(size_t n_total, const T *raw_data);
 
             // copy ctor
             Matrix(const Matrix<T> &);

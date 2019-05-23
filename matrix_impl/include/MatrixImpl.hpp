@@ -48,6 +48,49 @@ namespace matrix { inline namespace v1 {
     }
 
     template<typename T>
+    Matrix<T>::Matrix(size_t n_total, const T *raw_data)
+    {
+      for(size_t i = 0; i < n_total; ++i){
+        m_data[i] = raw_data[i];
+      }
+    }
+
+    template<>
+    inline
+    Matrix<double>::Matrix(size_t n_total, const double *raw_data)
+    {
+      size_t offset = 0;
+      const auto &beg = m_data.get();
+      const double *raw_pos = raw_data;
+      while(n_total > static_cast<size_t>(int_max)){
+        cblas_dcopy(int_max, raw_pos, 1, std::next(beg, offset), 1);
+
+        n_total -= (size_t)int_max;
+        offset += (size_t)int_max;
+        raw_pos += int_max;
+      }
+      cblas_dcopy(n_total, raw_pos, 1, std::next(beg, offset), 1);
+    }
+
+    template<>
+    inline
+    Matrix<cxdbl>::Matrix(size_t n_total, const cxdbl *raw_data)
+    {
+      size_t offset = 0;
+      const auto &beg = m_data.get();
+      const cxdbl *raw_pos = raw_data;
+      while(n_total > static_cast<size_t>(int_max)){
+        cblas_zcopy(int_max, raw_pos, 1, std::next(beg, offset), 1);
+
+        n_total -= (size_t)int_max;
+        offset += (size_t)int_max;
+        raw_pos += int_max;
+      }
+      cblas_zcopy(n_total, raw_pos, 1, std::next(beg, offset), 1);
+    }
+
+
+    template<typename T>
     Matrix<T>::Matrix(const Matrix<T> &rhs)
         : m_nrows(rhs.m_nrows), m_ncols(rhs.m_ncols),
         m_data(std::make_unique<T[]>(rhs.m_nrows * rhs.m_ncols))
@@ -63,7 +106,17 @@ namespace matrix { inline namespace v1 {
         : m_nrows(rhs.m_nrows), m_ncols(rhs.m_ncols),
         m_data(std::make_unique<double[]>(rhs.m_nrows * rhs.m_ncols))
     {
-      cblas_dcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
+      size_t n_total = rhs.m_nrows * rhs.m_ncols;
+      size_t offset = 0;
+      const auto &beg = m_data.get();
+      const auto &raw_beg = rhs.m_data.get();
+      while(n_total > static_cast<size_t>(int_max)){
+        cblas_dcopy(int_max, std::next(raw_beg, offset), 1, std::next(beg, offset), 1);
+
+        n_total -= (size_t)int_max;
+        offset += (size_t)int_max;
+      }
+      cblas_dcopy(int_max, std::next(raw_beg, offset), 1, std::next(beg, offset), 1);
     }
 
     template<>
@@ -72,7 +125,17 @@ namespace matrix { inline namespace v1 {
         : m_nrows(rhs.m_nrows), m_ncols(rhs.m_ncols),
         m_data(std::make_unique<cxdbl[]>(rhs.m_nrows * rhs.m_ncols))
     {
-      cblas_zcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
+      size_t n_total = rhs.m_nrows * rhs.m_ncols;
+      size_t offset = 0;
+      const auto &beg = m_data.get();
+      const auto &raw_beg = rhs.m_data.get();
+      while(n_total > static_cast<size_t>(int_max)){
+        cblas_zcopy(int_max, std::next(raw_beg, offset), 1, std::next(beg, offset), 1);
+
+        n_total -= (size_t)int_max;
+        offset += (size_t)int_max;
+      }
+      cblas_zcopy(int_max, std::next(raw_beg, offset), 1, std::next(beg, offset), 1);
     }
 
     template<typename T>
