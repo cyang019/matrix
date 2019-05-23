@@ -7,9 +7,9 @@
 #include <initializer_list>
 #include <complex>
 #include <random>
-#include "cblas.h"
 #include "common.h"
 #include "errors.h"
+#include "blas_wrapper/blas_functions.h"
 
 // temperary
 #include <iostream>

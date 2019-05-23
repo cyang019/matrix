@@ -1,7 +1,4 @@
-add_library(matrix INTERFACE)
-#  "include/Matrix.h"
-#  "include/MatrixImpl.hpp"
-#)
+add_library(matrix SHARED "")
 
 
 if (APPLE)
@@ -41,9 +38,9 @@ else()
   endif()
 endif()
 
-target_link_libraries(matrix INTERFACE cblas)
+target_link_libraries(matrix PRIVATE cblas)
 target_include_directories(matrix
-  INTERFACE
+  PUBLIC
   "${BLAS_INCLUDE_DIR}"
   "${PROJECT_SOURCE_DIR}/matrix_impl/include"
 )
