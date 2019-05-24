@@ -186,7 +186,7 @@ namespace matrix { inline namespace v1 {
     Matrix<T>& Matrix<T>::operator+=(const Matrix<T> &rhs)
     {
       if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
-          throw std::length_error("cannot add matrices of different dimensions.");
+          throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
 
       for(size_t i = 0; i < m_ncols * m_nrows; ++i){
           m_data[i] += rhs.m_data[i];
@@ -199,6 +199,15 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<double>& Matrix<double>::operator+=(const Matrix<double> &rhs)
     {
+      matrix_daxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<cxdbl>& Matrix<cxdbl>::operator+=(const Matrix<cxdbl> &rhs)
+    {
+      matrix_zaxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
 
@@ -206,7 +215,7 @@ namespace matrix { inline namespace v1 {
     Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &rhs)
     {
         if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
-            throw std::length_error("cannot subtract matrices of different dimensions.");
+            throw MatrixSizeMismatchError("cannot subtract matrices of different dimensions.");
 
         for(size_t i = 0; i < m_ncols * m_nrows; ++i){
             m_data[i] -= rhs.m_data[i];
@@ -214,6 +223,23 @@ namespace matrix { inline namespace v1 {
 
         return *this;
     }
+
+    template<>
+    inline
+    Matrix<double>& Matrix<double>::operator-=(const Matrix<double> &rhs)
+    {
+      matrix_daxpy(m_ncols * m_nrows, -1.0, rhs.m_data.get(), 1, m_data.get(), 1);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<cxdbl>& Matrix<cxdbl>::operator-=(const Matrix<cxdbl> &rhs)
+    {
+      matrix_zaxpy(m_ncols * m_nrows, -1.0, rhs.m_data.get(), 1, m_data.get(), 1);
+      return *this;
+    }
+
 
     template<typename T>
     Matrix<T>& Matrix<T>::setZero()
@@ -235,6 +261,22 @@ namespace matrix { inline namespace v1 {
           }
       }
 
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<double>& Matrix<double>::setZero()
+    {
+      matrix_dscal(m_ncols*m_nrows, 0.0, m_data.get(), 1);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<cxdbl>& Matrix<cxdbl>::setZero()
+    {
+      matrix_zscal(m_ncols*m_nrows, cx_zero, m_data.get(), 1);
       return *this;
     }
 
@@ -321,6 +363,9 @@ namespace matrix { inline namespace v1 {
     size_t Matrix<T>::ncols() const
     { return m_ncols; }
 
+    template<typename T>
+    std::tuple<size_t, size_t> Matrix<T>::shape() const
+    { return std::make_tuple(m_nrows, m_ncols); }
 
 } ///< inline namespace v1
 } ///< namespace matrix

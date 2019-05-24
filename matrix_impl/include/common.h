@@ -10,6 +10,7 @@ namespace matrix {
     using cxdbl = std::complex<double>;
     constexpr double eps = std::numeric_limits<double>::epsilon();
     constexpr int int_max = std::numeric_limits<int>::max();
+    constexpr cxdbl cx_zero = 0;
 
     template <typename T> using static_not = std::integral_constant<bool, !T::value>;
 

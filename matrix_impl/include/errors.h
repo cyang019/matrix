@@ -10,6 +10,11 @@ namespace matrix {
     public:
       using std::length_error::length_error;
     };
+
+    class MatrixSizeMismatchError : public std::length_error {
+    public:
+      using std::length_error::length_error;
+    };
   }
 }
 

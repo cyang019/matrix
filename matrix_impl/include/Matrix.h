@@ -2,6 +2,7 @@
 #define _MATRIX_MATRIX_H
 
 #include <memory>   // unique_ptr
+#include <utility>
 #include <exception>
 #include <type_traits>
 #include <initializer_list>
@@ -92,6 +93,8 @@ namespace matrix {
             Matrix<T>& operator+=(const Matrix<T> &);
             Matrix<T>& operator-=(const Matrix<T> &);
             Matrix<T>& operator*=(const Matrix<T> &);
+            Matrix<T>& operator*=(const T &);
+            Matrix<T>& operator/=(const T &);
             Matrix<T>& setZero();
             Matrix<T>& setOne();
             Matrix<T>& setRandom();
@@ -112,6 +115,8 @@ namespace matrix {
 
             size_t nrows() const;
             size_t ncols() const;
+
+            std::tuple<size_t, size_t> shape() const;
         private:
             std::unique_ptr<T[]> m_data; ///< serialized matrix
             size_t m_nrows;

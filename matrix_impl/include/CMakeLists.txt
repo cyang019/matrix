@@ -1,6 +1,10 @@
 target_sources(matrix
   PRIVATE
+  "${CMAKE_CURRENT_LIST_DIR}/errors.h"
   "${CMAKE_CURRENT_LIST_DIR}/common.h"
+  "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/blas_level1.h"
+  "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/blas_level2.h"
+  "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/blas_level3.h"
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/blas_functions.h"
   "${CMAKE_CURRENT_LIST_DIR}/Matrix.h"
   )
