@@ -59,14 +59,14 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<double>::Matrix(size_t n_total, const double *raw_data)
     {
-      matrix_dcopy(n_total, raw_data, 1, m_data.get(), 1);
+      lvl1_dcopy(n_total, raw_data, 1, m_data.get(), 1);
     }
 
     template<>
     inline
     Matrix<cxdbl>::Matrix(size_t n_total, const cxdbl *raw_data)
     {
-      matrix_zcopy(n_total, raw_data, 1, m_data.get(), 1);
+      lvl1_zcopy(n_total, raw_data, 1, m_data.get(), 1);
     }
 
 
@@ -87,7 +87,7 @@ namespace matrix { inline namespace v1 {
         m_data(std::make_unique<double[]>(rhs.m_nrows * rhs.m_ncols))
     {
       const size_t n_total = rhs.m_nrows * rhs.m_ncols;
-      matrix_dcopy(n_total, rhs.m_data.get(), 1, m_data.get(), 1);
+      lvl1_dcopy(n_total, rhs.m_data.get(), 1, m_data.get(), 1);
     }
 
     template<>
@@ -97,7 +97,7 @@ namespace matrix { inline namespace v1 {
         m_data(std::make_unique<cxdbl[]>(rhs.m_nrows * rhs.m_ncols))
     {
       const size_t n_total = rhs.m_nrows * rhs.m_ncols;
-      matrix_zcopy(n_total, rhs.m_data.get(), 1, m_data.get(), 1);
+      lvl1_zcopy(n_total, rhs.m_data.get(), 1, m_data.get(), 1);
     }
 
     template<typename T>
@@ -125,7 +125,7 @@ namespace matrix { inline namespace v1 {
       m_nrows = rhs.m_nrows;
       m_ncols = rhs.m_ncols;
       m_data = std::make_unique<double[]>(rhs.m_nrows * rhs.m_ncols);
-      matrix_dcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
+      lvl1_dcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
 
@@ -136,7 +136,7 @@ namespace matrix { inline namespace v1 {
       m_nrows = rhs.m_nrows;
       m_ncols = rhs.m_ncols;
       m_data = std::make_unique<cxdbl[]>(rhs.m_nrows * rhs.m_ncols);
-      matrix_zcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
+      lvl1_zcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
 
@@ -195,11 +195,31 @@ namespace matrix { inline namespace v1 {
       return *this;
     }
 
+    template<typename T>
+    Matrix<T>& Matrix<T>::operator+=(const T &rhs)
+    {
+      for(size_t i = 0; i < m_ncols * m_nrows; ++i){
+          m_data[i] += rhs;
+      }
+
+      return *this;
+    }
+
+    template<typename T>
+    Matrix<T>& Matrix<T>::operator-=(const T &rhs)
+    {
+      for(size_t i = 0; i < m_ncols * m_nrows; ++i){
+          m_data[i] -= rhs;
+      }
+
+      return *this;
+    }
+
     template<>
     inline
     Matrix<double>& Matrix<double>::operator+=(const Matrix<double> &rhs)
     {
-      matrix_daxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
+      lvl1_daxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
 
@@ -207,7 +227,7 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<cxdbl>& Matrix<cxdbl>::operator+=(const Matrix<cxdbl> &rhs)
     {
-      matrix_zaxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
+      lvl1_zaxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
 
@@ -228,7 +248,7 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<double>& Matrix<double>::operator-=(const Matrix<double> &rhs)
     {
-      matrix_daxpy(m_ncols * m_nrows, -1.0, rhs.m_data.get(), 1, m_data.get(), 1);
+      lvl1_daxpy(m_ncols * m_nrows, -1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
 
@@ -236,10 +256,59 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<cxdbl>& Matrix<cxdbl>::operator-=(const Matrix<cxdbl> &rhs)
     {
-      matrix_zaxpy(m_ncols * m_nrows, -1.0, rhs.m_data.get(), 1, m_data.get(), 1);
+      lvl1_zaxpy(m_ncols * m_nrows, -1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
 
+    template<typename T>
+    Matrix<T>& Matrix<T>::operator*=(const T &rhs)
+    {
+      for(size_t i = 0; i < m_ncols * m_nrows; ++i){
+        m_data[i] *= rhs;
+      }
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<double>& Matrix<double>::operator*=(const double &rhs)
+    {
+      lvl1_dscal(m_ncols * m_nrows, rhs, m_data.get(), 1);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<cxdbl>& Matrix<cxdbl>::operator*=(const cxdbl &rhs)
+    {
+      lvl1_zscal(m_ncols * m_nrows, rhs, m_data.get(), 1);
+      return *this;
+    }
+
+    template<typename T>
+    Matrix<T>& Matrix<T>::operator/=(const T &rhs)
+    {
+      for(size_t i = 0; i < m_ncols * m_nrows; ++i){
+        m_data[i] /= rhs;
+      }
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<double>& Matrix<double>::operator/=(const double &rhs)
+    {
+      lvl1_dscal(m_nrows * m_ncols, 1.0/rhs, m_data.get(), 1);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<cxdbl>& Matrix<cxdbl>::operator/=(const cxdbl &rhs)
+    {
+      lvl1_zscal(m_nrows * m_ncols, 1.0/rhs, m_data.get(), 1);
+      return *this;
+    }
 
     template<typename T>
     Matrix<T>& Matrix<T>::setZero()
@@ -268,7 +337,7 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<double>& Matrix<double>::setZero()
     {
-      matrix_dscal(m_ncols*m_nrows, 0.0, m_data.get(), 1);
+      lvl1_dscal(m_ncols*m_nrows, 0.0, m_data.get(), 1);
       return *this;
     }
 
@@ -276,7 +345,7 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<cxdbl>& Matrix<cxdbl>::setZero()
     {
-      matrix_zscal(m_ncols*m_nrows, cx_zero, m_data.get(), 1);
+      lvl1_zscal(m_ncols*m_nrows, cx_zero, m_data.get(), 1);
       return *this;
     }
 
@@ -345,6 +414,76 @@ namespace matrix { inline namespace v1 {
     {
       const size_t idx = m_nrows * t_col + t_row;
       return m_data[idx];
+    }
+
+    template<typename T>
+    Matrix<T> Matrix<T>::t() const
+    {
+      auto res = Matrix<T>(m_ncols, m_nrows);
+      for(size_t i = 0; i < m_ncols; ++i){
+        for(size_t j = 0; j < m_nrows; ++j){
+          const auto orig_pos = i * m_nrows + j;
+          const auto dest_pos = j * m_ncols + i;
+          res.m_data[dest_pos] = m_data[orig_pos];
+        }
+      }
+      return res;
+    }
+
+    template<typename T>
+    Matrix<T>& Matrix<T>::tInplace()
+    {
+      auto transposed = std::make_unique<double[]>(m_ncols * m_nrows);
+      for(size_t i = 0; i < m_ncols; ++i){
+        for(size_t j = 0; j < m_nrows; ++j){
+          const auto orig_pos = i * m_nrows + j;
+          const auto dest_pos = j * m_ncols + i;
+          transposed[dest_pos] = m_data[orig_pos];
+        }
+      }
+      std::swap(m_nrows, m_ncols);
+      m_data = std::move(transposed);
+      return *this;
+    }
+
+    template<typename T>
+    Matrix<T> Matrix<T>::adjoint() const
+    {
+      if constexpr (is_complex<T>::value){
+        auto res = Matrix<T>(m_ncols, m_nrows);
+        for(size_t i = 0; i < m_ncols; ++i){
+          for(size_t j = 0; j < m_nrows; ++j){
+            const auto orig_pos = i * m_nrows + j;
+            const auto dest_pos = j * m_ncols + i;
+            res.m_data[dest_pos] = std::conj(m_data[orig_pos]);
+          }
+        }
+        return res;
+      }
+      else{
+        return Matrix<T>::t();
+      }
+    }
+
+    template<typename T>
+    Matrix<T>& Matrix<T>::adjointInplace()
+    {
+      if constexpr (is_complex<T>::value){
+        auto transposed = std::make_unique<cxdbl[]>(m_ncols * m_nrows);
+        for(size_t i = 0; i < m_ncols; ++i){
+          for(size_t j = 0; j < m_nrows; ++j){
+            const auto orig_pos = i * m_nrows + j;
+            const auto dest_pos = j * m_ncols + i;
+            transposed[dest_pos] = std::conj(m_data[orig_pos]);
+          }
+        }
+        std::swap(m_nrows, m_ncols);
+        m_data = std::move(transposed);
+        return *this;
+      }
+      else{
+        return Matrix<T>::tInplace();
+      }
     }
 
     template<typename T>
