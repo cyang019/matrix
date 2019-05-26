@@ -1,13 +1,14 @@
-#include "blas_wrapper/blas_level2.h"
+#include "cblas.h"
+#include "blas_wrapper/cblas_level3.h"
 #include "errors.h"
 
 
 namespace matrix {
   inline namespace v1 {
     void lvl3_cblas_dgemm(
-        const CBLAS_ORDER &layout,
-        const CBLAS_TRANSPOSE &TransA,
-        const CBLAS_TRANSPOSE &TransB,
+        const CblasOrder &layout,
+        const CblasTranspose &TransA,
+        const CblasTranspose &TransB,
         size_t m, size_t n, size_t k,
         double alpha, const double *A, int lda, const double *B, int ldb,
         double beta, double *C, int ldc)
@@ -17,14 +18,15 @@ namespace matrix {
         throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
       }
 #endif
-      cblas_dgemm(layout, TransA, TransB, (int)m, (int)n, (int)k,
-          alpha, A, lda, B, ldb, beta, C, ldc);
+      cblas_dgemm((CBLAS_ORDER)layout, (CBLAS_TRANSPOSE)TransA, (CBLAS_TRANSPOSE)TransB,
+        (int)m, (int)n, (int)k,
+        alpha, A, lda, B, ldb, beta, C, ldc);
     }
 
     void lvl3_cblas_zgemm(
-        const CBLAS_ORDER &layout,
-        const CBLAS_TRANSPOSE &TransA,
-        const CBLAS_TRANSPOSE &TransB,
+        const CblasOrder &layout,
+        const CblasTranspose &TransA,
+        const CblasTranspose &TransB,
         size_t m, size_t n, size_t k,
         cxdbl alpha, const cxdbl *A, int lda, const cxdbl *B, int ldb,
         cxdbl beta, cxdbl *C, int ldc)
@@ -34,7 +36,8 @@ namespace matrix {
         throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
       }
 #endif
-      cblas_zgemm(layout, TransA, TransB, (int)m, (int)n, (int)k,
+      cblas_zgemm((CBLAS_ORDER)layout, (CBLAS_TRANSPOSE)TransA, (CBLAS_TRANSPOSE)TransB,
+          (int)m, (int)n, (int)k,
           &alpha, A, lda, B, ldb, &beta, C, ldc);
     }
   } // namespace v1

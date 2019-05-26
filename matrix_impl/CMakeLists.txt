@@ -5,11 +5,7 @@ set(USE_DEBUG_MODEL ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
 
-if(CMAKE_BUILD_TYPE EQUAL DEBUG)
-  target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
-else()
-  target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
-endif()
+target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
 
 if (APPLE)
   message("OSX detected. Link cblas...")
@@ -50,8 +46,9 @@ endif()
 
 target_link_libraries(matrix PRIVATE cblas)
 target_include_directories(matrix
-  PUBLIC
+  PRIVATE
   "${BLAS_INCLUDE_DIR}"
+  PUBLIC
   "${PROJECT_SOURCE_DIR}/matrix_impl/include"
 )
 

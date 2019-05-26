@@ -1,7 +1,7 @@
 #ifndef _MATRIX_BLAS_LEVEL1_H
 #define _MATRIX_BLAS_LEVEL1_H
 
-#include "cblas.h"
+#include "blas_wrapper/cblas_common.h"
 #include "common.h"
 
 namespace matrix {
