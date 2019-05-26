@@ -172,22 +172,25 @@ namespace matrix { inline namespace v1 {
     template<typename T>
     Matrix<T>& Matrix<T>::swapRows(size_t t_i, size_t t_j)
     {
-        if(t_i >= m_nrows || t_j >= m_nrows){
-            throw std::out_of_range("row index out of bound.");
-        }
-        for(size_t idx = 0; idx < m_ncols; idx+=m_nrows){
-            std::swap(m_data[t_i + idx * m_ncols], m_data[t_j + idx * m_ncols]);
-        }
+#ifndef NDEBUG
+      if(t_i >= m_nrows || t_j >= m_nrows){
+          throw IndexOutOfBound("row index out of bound.");
+      }
+#endif
+      for(size_t idx = 0; idx < m_ncols; idx+=m_nrows){
+          std::swap(m_data[t_i + idx * m_ncols], m_data[t_j + idx * m_ncols]);
+      }
 
-        return *this;
+      return *this;
     }
 
     template<typename T>
     Matrix<T>& Matrix<T>::operator+=(const Matrix<T> &rhs)
     {
+#ifndef NDEBUG
       if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
           throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
-
+#endif
       for(size_t i = 0; i < m_ncols * m_nrows; ++i){
           m_data[i] += rhs.m_data[i];
       }
@@ -219,6 +222,11 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<double>& Matrix<double>::operator+=(const Matrix<double> &rhs)
     {
+#ifndef NDEBUG
+      if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
+          throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
+#endif
+
       lvl1_daxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
@@ -227,6 +235,11 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<cxdbl>& Matrix<cxdbl>::operator+=(const Matrix<cxdbl> &rhs)
     {
+#ifndef NDEBUG
+      if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
+          throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
+#endif
+      assert(rhs.m_nrows == m_nrows && rhs.m_ncols == m_ncols);
       lvl1_zaxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
@@ -234,20 +247,26 @@ namespace matrix { inline namespace v1 {
     template<typename T>
     Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &rhs)
     {
-        if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
-            throw MatrixSizeMismatchError("cannot subtract matrices of different dimensions.");
+#ifndef NDEBUG
+      if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
+          throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
+#endif
 
-        for(size_t i = 0; i < m_ncols * m_nrows; ++i){
-            m_data[i] -= rhs.m_data[i];
-        }
+      for(size_t i = 0; i < m_ncols * m_nrows; ++i){
+          m_data[i] -= rhs.m_data[i];
+      }
 
-        return *this;
+      return *this;
     }
 
     template<>
     inline
     Matrix<double>& Matrix<double>::operator-=(const Matrix<double> &rhs)
     {
+#ifndef NDEBUG
+      if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
+          throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
+#endif
       lvl1_daxpy(m_ncols * m_nrows, -1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
@@ -256,6 +275,10 @@ namespace matrix { inline namespace v1 {
     inline
     Matrix<cxdbl>& Matrix<cxdbl>::operator-=(const Matrix<cxdbl> &rhs)
     {
+#ifndef NDEBUG
+      if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
+          throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
+#endif
       lvl1_zaxpy(m_ncols * m_nrows, -1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
@@ -405,13 +428,21 @@ namespace matrix { inline namespace v1 {
     template<typename T>
     T& Matrix<T>::operator()(size_t t_row, size_t t_col) const
     {
-        const size_t idx = m_nrows * t_col + t_row;
-        return m_data[idx];
+#ifndef NDEBUG
+      if (t_row >= m_nrows || t_col >= m_ncols)
+        throw IndexOutOfBound("index out of bound.");
+#endif
+      const size_t idx = m_nrows * t_col + t_row;
+      return m_data[idx];
     }
 
     template<typename T>
     T& Matrix<T>::operator()(size_t t_row, size_t t_col)
     {
+#ifndef NDEBUG
+      if (t_row >= m_nrows || t_col >= m_ncols)
+        throw IndexOutOfBound("index out of bound.");
+#endif
       const size_t idx = m_nrows * t_col + t_row;
       return m_data[idx];
     }
@@ -433,16 +464,18 @@ namespace matrix { inline namespace v1 {
     template<typename T>
     Matrix<T>& Matrix<T>::tInplace()
     {
-      auto transposed = std::make_unique<double[]>(m_ncols * m_nrows);
-      for(size_t i = 0; i < m_ncols; ++i){
-        for(size_t j = 0; j < m_nrows; ++j){
-          const auto orig_pos = i * m_nrows + j;
-          const auto dest_pos = j * m_ncols + i;
-          transposed[dest_pos] = m_data[orig_pos];
+      if(m_nrows != 1 && m_ncols != 1) {
+        auto transposed = std::make_unique<double[]>(m_ncols * m_nrows);
+        for(size_t i = 0; i < m_ncols; ++i){
+          for(size_t j = 0; j < m_nrows; ++j){
+            const auto orig_pos = i * m_nrows + j;
+            const auto dest_pos = j * m_ncols + i;
+            transposed[dest_pos] = m_data[orig_pos];
+          }
         }
+        m_data = std::move(transposed);
       }
       std::swap(m_nrows, m_ncols);
-      m_data = std::move(transposed);
       return *this;
     }
 

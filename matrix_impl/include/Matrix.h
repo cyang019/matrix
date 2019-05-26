@@ -8,6 +8,7 @@
 #include <initializer_list>
 #include <complex>
 #include <random>
+#include <cassert>
 #include "common.h"
 #include "errors.h"
 #include "blas_wrapper/blas_functions.h"
@@ -128,9 +129,9 @@ namespace matrix {
 
           std::tuple<size_t, size_t> shape() const;
         private:
-          std::unique_ptr<T[]> m_data; ///< serialized matrix
           size_t m_nrows;
           size_t m_ncols;
+          std::unique_ptr<T[]> m_data; ///< serialized matrix
         };
     }
 }

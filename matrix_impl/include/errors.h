@@ -15,6 +15,16 @@ namespace matrix {
     public:
       using std::length_error::length_error;
     };
+
+    class IndexOutOfBound : public std::out_of_range {
+    public:
+      using std::out_of_range::out_of_range;
+    };
+
+    class MultiplicationError : public std::length_error {
+    public:
+      using std::length_error::length_error;
+    };
   }
 }
 

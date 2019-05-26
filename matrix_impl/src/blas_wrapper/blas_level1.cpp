@@ -25,6 +25,17 @@ namespace matrix {
       cblas_zscal(n, &alpha, x, incx);
     }
 
+    void lvl1_zdscal(size_t n, double alpha, cxdbl *x, int incx)
+    {
+      while(n > (size_t)int_max){
+        cblas_zdscal(int_max, alpha, x, incx);
+
+        n -= (size_t)int_max;
+        x += int_max;
+      }
+      cblas_zdscal(n, alpha, x, incx);
+    }
+
     void lvl1_dcopy(size_t n, const double *x, int inc_x, double *y, int inc_y)
     {
       while(n > (size_t)int_max){
@@ -35,6 +46,38 @@ namespace matrix {
         y += int_max;
       }
       cblas_dcopy(n, x, inc_x, y, inc_y);
+    }
+
+    double lvl1_ddot(size_t n, const double *x, int inc_x, const double *y, int inc_y)
+    {
+      double res = 0;
+      while(n > (size_t)int_max){
+        res += cblas_ddot(int_max, x, inc_x, y, inc_y);
+
+        n -= (size_t)int_max;
+        x += int_max;
+        y += int_max;
+      }
+      res += cblas_ddot(n, x, inc_x, y, inc_y);
+      return res;
+    }
+
+    cxdbl lvl1_zdot(size_t n, const cxdbl *x, int inc_x, const cxdbl *y, int inc_y)
+    {
+      cxdbl res = 0;
+      while(n > (size_t)int_max){
+        cxdbl temp = 0;
+        cblas_zdotc_sub(int_max, x, inc_x, y, inc_y, &temp);
+
+        n -= (size_t)int_max;
+        x += int_max;
+        y += int_max;
+        res += temp;
+      }
+      cxdbl temp = 0;
+      cblas_zdotc_sub(n, x, inc_x, y, inc_y, &temp);
+      res += temp;
+      return res;
     }
 
     void lvl1_zcopy(size_t n, const cxdbl *x, int inc_x, cxdbl *y, int inc_y)
