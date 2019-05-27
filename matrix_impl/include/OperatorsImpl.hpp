@@ -1,6 +1,45 @@
 namespace matrix {
   inline namespace v1 {
     template<typename T>
+    bool operator==(const Matrix<T> &lhs, const Matrix<T> &rhs)
+    {
+      if(lhs.m_ncols != rhs.m_ncols || lhs.m_nrows != rhs.m_nrows)
+        return false;
+
+      const size_t n_total = lhs.m_ncols * lhs.m_nrows;
+      for(size_t i = 0; i < n_total; ++i){
+        if(lhs.m_data[i] != rhs.m_data[i]){
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    template<typename T>
+    bool operator!=(const Matrix<T> &lhs, const Matrix<T> &rhs)
+    {
+      return !operator==<T>(lhs, rhs);
+    }
+
+    inline bool allclose(const Matrix<double> &lhs, const Matrix<double> &rhs, double eps)
+    {
+      if(lhs.ncols() != rhs.ncols() || lhs.nrows() != rhs.nrows())
+        return false;
+
+      const size_t n_total = lhs.ncols() * lhs.nrows();
+      auto d1 = lhs.data();
+      auto d2 = rhs.data();
+      for(size_t i = 0; i < n_total; ++i){
+        if(std::abs(d1[i] - d2[i]) > eps){
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    template<typename T>
     Matrix<T> operator+(const Matrix<T> &t_m1, const Matrix<T> &t_m2)
     {
       Matrix<T> m = t_m1;

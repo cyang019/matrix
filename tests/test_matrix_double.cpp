@@ -90,5 +90,26 @@ namespace {
       EXPECT_EQ(6, d3(0, 1));
       EXPECT_EQ(8, d3(1, 0));
       EXPECT_EQ(10, d3(1, 1));
+
+      auto d6 = d5 + 2.0;
+      EXPECT_EQ(4, d6(0, 0));
+      EXPECT_EQ(6, d6(0, 1));
+      EXPECT_EQ(8, d6(1, 0));
+      EXPECT_EQ(10, d6(1, 1));
+
+      auto d7 = 2.0 + d5;
+      EXPECT_EQ(4, d7(0, 0));
+      EXPECT_EQ(6, d7(0, 1));
+      EXPECT_EQ(8, d7(1, 0));
+      EXPECT_EQ(10, d7(1, 1));
+    }
+
+    TEST(TestMatrix, DoubleEqual){
+      MatrixD d1 = {{1, 2}, {3, 4}};
+      MatrixD d2 = d1;
+      MatrixD d3 = d1 + d2;
+      ASSERT_TRUE(allclose(d1, d2, 1.0e-14));
+      ASSERT_TRUE(!allclose(d1, d3, 1.0e-14));
+      ASSERT_TRUE(d1 != d3);
     }
 }

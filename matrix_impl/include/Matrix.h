@@ -9,6 +9,7 @@
 #include <complex>
 #include <random>
 #include <cassert>
+#include <cmath>    // abs
 #include "common.h"
 #include "errors.h"
 #include "blas_wrapper/cblas_functions.h"
@@ -28,6 +29,8 @@ namespace matrix {
 
         template<typename T>
         bool operator!=(const Matrix<T> &, const Matrix<T> &);
+
+        bool allclose(const Matrix<double> &, const Matrix<double> &, double);
 
         template<typename T>
         Matrix<T> operator+(const Matrix<T> &, const Matrix<T> &);
@@ -65,8 +68,8 @@ namespace matrix {
         template<typename T>
         class Matrix{
         public:
-          friend bool operator==(const Matrix<T> &, const Matrix<T> &);
-          friend bool operator!=(const Matrix<T> &, const Matrix<T> &);
+          friend bool operator==<T>(const Matrix<T> &, const Matrix<T> &);
+          friend bool operator!=<T>(const Matrix<T> &, const Matrix<T> &);
           friend Matrix<T> operator+<T>(const Matrix<T> &t_m1, const Matrix<T> &t_m2);
           friend Matrix<T> operator+<T>(const T &t_v1, const Matrix<T> &t_m2);
           friend Matrix<T> operator+<T>(const Matrix<T> &t_m1, const T &t_v2);
@@ -138,7 +141,7 @@ namespace matrix {
 
 #include "MatrixImpl.hpp"
 
-#include "operators_impl.hpp"
+#include "OperatorsImpl.hpp"
 
 
 #endif

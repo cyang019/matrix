@@ -12,6 +12,7 @@ option(BUILD_TESTS "build unittests as well" ON)
 add_subdirectory(matrix_impl)
 
 include(cmake/googletest.cmake)
+include(cmake/CodeCoverage.cmake)
 fetch_googletest(
   ${PROJECT_SOURCE_DIR}/cmake
   ${PROJECT_BINARY_DIR}/googletest

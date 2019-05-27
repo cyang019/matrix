@@ -1,12 +1,30 @@
-#include(GoogleTest)
 file(GLOB SRCS *.cpp)
 add_executable(test_matrix ${SRCS})
+
+set(USE_COVERAGE_GCOV ON)
 
 target_link_libraries(
   test_matrix
   matrix
   gtest_main
   )
+
+if(USE_COVERAGE_GCOV)
+  if(APPLE)
+    message("APPLE coverage...")
+    target_compile_options(test_matrix PUBLIC
+      -g -O0 --coverage)
+  else()
+    target_compile_options(test_matrix PUBLIC
+      -Wall -fprofile-arcs -ftest-coverage
+    )
+    target_link_libraries(test_matrix gcov)
+  endif()
+else()
+  target_compile_options(test_matrix PUBLIC
+    -Wall)
+endif()
+
 
 target_include_directories(
   test_matrix
@@ -22,4 +40,12 @@ target_include_directories(
 #set_tests_properties(${noArgsTests} PROPERTIES TIMEOUT 10)
 add_test(NAME test_matrix
          COMMAND test_matrix)
+
+add_custom_command(TARGET test_matrix POST_BUILD
+  COMMAND make test
+  COMMAND lcov -c -d tests/CMakeFiles -o cov.info
+  COMMAND genhtml cov.info -o out
+  COMMAND open out/index.html
+  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  )
 
