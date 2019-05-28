@@ -44,7 +44,7 @@ else()
   endif()
 endif()
 
-target_link_libraries(matrix PRIVATE cblas)
+target_link_libraries(matrix PRIVATE cblas clapack)
 target_include_directories(matrix
   PRIVATE
   "${BLAS_INCLUDE_DIR}"

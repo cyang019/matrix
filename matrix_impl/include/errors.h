@@ -25,6 +25,16 @@ namespace matrix {
     public:
       using std::length_error::length_error;
     };
+
+    class NotImplementedError : public std::logic_error {
+    public:
+      using std::logic_error::logic_error;
+    };
+
+    class NonInvertibleMatrix : public std::logic_error {
+    public:
+      using std::logic_error::logic_error;
+    };
   }
 }
 

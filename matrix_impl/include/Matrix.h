@@ -64,6 +64,9 @@ namespace matrix {
 
         Matrix<cxdbl> exp(const Matrix<cxdbl> &);
 
+        template<typename T>
+        std::tuple<Matrix<T>, Matrix<T>> eigen_sys(const Matrix<T> &);
+
         // @brief: column major matrix type.
         template<typename T>
         class Matrix{
@@ -124,11 +127,17 @@ namespace matrix {
           Matrix<T> adjoint() const;
           Matrix<T>& adjointInplace();
 
+          // Inverse
+          Matrix<T> inverse() const;
+          Matrix<T>& inverseInplace();
+
           T* data();
           const T* data() const;
 
           size_t nrows() const;
           size_t ncols() const;
+
+          T trace() const;
 
           std::tuple<size_t, size_t> shape() const;
         private:

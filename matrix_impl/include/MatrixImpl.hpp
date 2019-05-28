@@ -519,6 +519,74 @@ namespace matrix { inline namespace v1 {
       }
     }
 
+    template<typename T> 
+    Matrix<T> Matrix<T>::inverse() const
+    {
+      throw NotImplementedError("Matrix Inverse not implemented.");
+    }
+
+    template<>
+    inline
+    Matrix<double> Matrix<double>::inverse() const
+    {
+#ifndef NDEBUG
+      if(m_nrows != m_ncols){
+        throw MatrixSizeMismatchError("Row and column numbers need to be the same.");
+      }
+      if(m_nrows == 0){
+        throw MatrixSizeMismatchError("Row and column numbers cannot be zero.");
+      }
+#endif
+      auto ptr_ipiv = std::make_unique<int[]>(m_nrows);
+      int errorHandler;
+      auto ptr_lwork = std::make_unique<double[]>(
+          m_nrows * 2
+          );
+
+      Matrix<double> result = *this;
+      mat_dgetrf(m_nrows, m_ncols, result.m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
+      if(errorHandler > 0){
+        throw NonInvertibleMatrix("Matrix non-invertible.");
+      }
+
+      mat_dgetri(m_nrows, result.m_data.get(), m_nrows, ptr_ipiv.get(), ptr_lwork.get(), m_nrows * 2, &errorHandler);
+
+      return result;
+    }
+
+    template<typename T>
+    Matrix<T>& Matrix<T>::inverseInplace()
+    {
+      throw NotImplementedError("Matrix Inverse not implemented.");
+    }
+
+    template<>
+    inline
+    Matrix<double>& Matrix<double>::inverseInplace()
+    {
+#ifndef NDEBUG
+      if(m_nrows != m_ncols){
+        throw MatrixSizeMismatchError("Row and column numbers need to be the same.");
+      }
+      if(m_nrows == 0){
+        throw MatrixSizeMismatchError("Row and column numbers cannot be zero.");
+      }
+#endif
+      auto ptr_ipiv = std::make_unique<int[]>(m_nrows);
+      int errorHandler;
+      auto ptr_lwork = std::make_unique<double[]>(
+          m_nrows * 2);
+
+      mat_dgetrf(m_nrows, m_ncols, m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
+      if(errorHandler > 0){
+        throw NonInvertibleMatrix("Matrix non-invertible.");
+      }
+
+      mat_dgetri(m_nrows, m_data.get(), m_nrows, ptr_ipiv.get(), ptr_lwork.get(), m_nrows * 2, &errorHandler);
+
+      return *this;
+    }
+  
     template<typename T>
     T* Matrix<T>::data()
     { return m_data.get(); }
@@ -534,6 +602,18 @@ namespace matrix { inline namespace v1 {
     template<typename T>
     size_t Matrix<T>::ncols() const
     { return m_ncols; }
+
+    template<typename T>
+    T Matrix<T>::trace() const
+    {
+      T result = 0;
+      const size_t n_total = std::min(m_nrows, m_ncols);
+      for(size_t i = 0; i < n_total; ++i){
+        const size_t pos = i * m_nrows + i;
+        result += m_data[pos];
+      }
+      return result;
+    }
 
     template<typename T>
     std::tuple<size_t, size_t> Matrix<T>::shape() const

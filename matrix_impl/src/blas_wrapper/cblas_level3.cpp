@@ -1,6 +1,14 @@
-#include "cblas.h"
 #include "blas_wrapper/cblas_level3.h"
 #include "errors.h"
+#include <complex>
+
+using namespace std;
+
+#ifdef __APPLE__
+#include "cblas.h"
+#include "clapack.h"
+#else
+#endif
 
 
 namespace matrix {
@@ -39,6 +47,35 @@ namespace matrix {
       cblas_zgemm((CBLAS_ORDER)layout, (CBLAS_TRANSPOSE)TransA, (CBLAS_TRANSPOSE)TransB,
           (int)m, (int)n, (int)k,
           &alpha, A, lda, B, ldb, &beta, C, ldc);
+    }
+
+    int mat_dgetrf(size_t m, size_t n, double *A, size_t lda, int *ipiv, int *info)
+    {
+#ifndef NDEBUG
+      if (m >= int_max || n >= int_max || lda >= int_max) {
+        throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
+      }
+#endif
+      int i_m = (int)m;
+      int i_n = (int)n;
+      int i_lda = (int)lda;
+      int res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
+      return res;
+    }
+
+    int mat_dgetri(size_t n, double *A, int lda, int * ipiv, 
+        double *work, size_t lwork, int *info)
+    {
+#ifndef NDEBUG
+      if (n >= int_max || lda >= int_max || lwork >= int_max) {
+        throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
+      }
+#endif
+      int i_n = (int)n;
+      int i_lda = (int)lda;
+      int i_lwork = (int)lwork;
+      int res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
+      return res;
     }
   } // namespace v1
 } // namespace matrix
