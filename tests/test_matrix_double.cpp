@@ -119,5 +119,24 @@ namespace {
 
       auto d3 = d1 * d2;
       EXPECT_DOUBLE_EQ(32, d3(0,0));
+
+      d1 = {{1, 2, 3}, {4, 5, 6}};
+      d3 = d1 * d2;
+      MatrixD d3_expected = {{32.0}, {77}};
+      ASSERT_TRUE(allclose(d3_expected, d3, 1.0e-14));
+
+      MatrixD d4 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+      MatrixD d5 = {{1, 4}, {2, 5}, {3, 6}};
+      auto d6 = d4 * d5;
+      MatrixD d6_expected = {{14, 32}, {32, 77}, {50, 122}};
+      ASSERT_TRUE(allclose(d6_expected, d6, 1.0e-14));
+    }
+
+    TEST(TestMatrix, DoubleInverse){
+      MatrixD d1 = {{1.0, 0, 0}, {0, 2.0, 0}, {0, 0, 4.0}};
+      auto d1_inv = d1.inverse();
+      auto d2 = d1 * d1_inv;
+      MatrixD d2_expected = {{1.0, 0, 0}, {0, 1.0, 0}, {0, 0, 1.0}};
+      ASSERT_TRUE(allclose(d2_expected, d2, 1.0e-14));
     }
 }

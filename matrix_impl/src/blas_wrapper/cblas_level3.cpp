@@ -63,7 +63,7 @@ namespace matrix {
       return res;
     }
 
-    int mat_dgetri(size_t n, double *A, int lda, int * ipiv, 
+    int mat_dgetri(size_t n, double *A, size_t lda, int * ipiv, 
         double *work, size_t lwork, int *info)
     {
 #ifndef NDEBUG
