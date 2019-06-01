@@ -14,6 +14,7 @@ namespace matrix {
       CblasTrans=112,
       CblasConjTrans=113
     };
+
   }
 }
 

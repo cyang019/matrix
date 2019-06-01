@@ -108,8 +108,10 @@ namespace {
       MatrixD d1 = {{1, 2}, {3, 4}};
       MatrixD d2 = d1;
       MatrixD d3 = d1 + d2;
+      MatrixD d3_expected = {{2, 4}, {6, 8}};
       ASSERT_TRUE(allclose(d1, d2, 1.0e-14));
       ASSERT_TRUE(!allclose(d1, d3, 1.0e-14));
+      ASSERT_TRUE(allclose(d3_expected, d3, 1.0e-14));
       ASSERT_TRUE(d1 != d3);
     }
 

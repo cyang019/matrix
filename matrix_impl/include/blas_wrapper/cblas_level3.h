@@ -7,7 +7,7 @@
 
 namespace matrix {
   inline namespace v1 {
-    void lvl3_cblas_dgemm(
+    void lvl3_dgemm(
         const CblasOrder &layout,
         const CblasTranspose &TransA,
         const CblasTranspose &TransB,
@@ -15,13 +15,21 @@ namespace matrix {
         double alpha, const double *A, int lda, const double *B, int ldb,
         double beta, double *C, int ldc);
 
-    void lvl3_cblas_zgemm(
+    void lvl3_zgemm(
         const CblasOrder &layout,
         const CblasTranspose &TransA,
         const CblasTranspose &TransB,
         size_t m, size_t n, size_t k,
         cxdbl alpha, const cxdbl *A, int lda, const cxdbl *B, int ldb,
         cxdbl beta, cxdbl *C, int ldc);
+
+    void lvl3_zgemm(
+        const CblasOrder &layout,
+        const CblasTranspose &TransA,
+        const CblasTranspose &TransB,
+        size_t m, size_t n, size_t k,
+        ComplexDbl alpha, const ComplexDbl *A, int lda, const ComplexDbl *B, int ldb,
+        ComplexDbl beta, ComplexDbl *C, int ldc);
 
 // LAPACK wrappers
     int mat_dgetrf(size_t m, size_t n,

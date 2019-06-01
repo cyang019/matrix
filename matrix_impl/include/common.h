@@ -12,6 +12,19 @@ namespace matrix {
     constexpr int int_max = std::numeric_limits<int>::max();
     constexpr cxdbl cx_zero = 0;
 
+    // complex double
+    // To be compatible with lapack
+    using ComplexDbl = struct { double r, i; };
+
+    ComplexDbl operator+(const ComplexDbl &lhs, const ComplexDbl &rhs);
+    ComplexDbl operator-(const ComplexDbl &lhs, const ComplexDbl &rhs);
+    ComplexDbl operator*(const ComplexDbl &lhs, const ComplexDbl &rhs);
+    ComplexDbl operator/(const ComplexDbl &lhs, const ComplexDbl &rhs);
+    ComplexDbl conj(const ComplexDbl &num);
+    ComplexDbl getComplexDblZero();
+    ComplexDbl getComplexDblOne();
+    ComplexDbl getComplexDblNegOne();
+
     template <typename T> using static_not = std::integral_constant<bool, !T::value>;
 
     template <typename T> struct is_default : std::true_type {};
@@ -22,9 +35,13 @@ namespace matrix {
     template<>
     struct is_default<cxdbl> : std::false_type {};
 
+    template<>
+    struct is_default<ComplexDbl> : std::false_type {};
+
     template<typename T> struct is_complex : std::false_type {};
     template<typename T> struct is_complex<std::complex<T>> 
       : std::true_type {};
+    template<> struct is_complex<ComplexDbl> : std::true_type {};
 
     template<typename T> struct is_double : std::false_type {};
     template<>
@@ -33,7 +50,6 @@ namespace matrix {
     template<typename T> struct is_int : std::false_type {};
     template<>
     struct is_int<int> : std::true_type {};
-
   }
 }
 

@@ -69,6 +69,12 @@ namespace matrix { inline namespace v1 {
       lvl1_zcopy(n_total, raw_data, 1, m_data.get(), 1);
     }
 
+    template<>
+    inline
+    Matrix<ComplexDbl>::Matrix(size_t n_total, const ComplexDbl *raw_data)
+    {
+      lvl1_zcopy(n_total, raw_data, 1, m_data.get(), 1);
+    }
 
     template<typename T>
     Matrix<T>::Matrix(const Matrix<T> &rhs)
@@ -95,6 +101,16 @@ namespace matrix { inline namespace v1 {
     Matrix<cxdbl>::Matrix(const Matrix<cxdbl> &rhs)
         : m_nrows(rhs.m_nrows), m_ncols(rhs.m_ncols),
         m_data(std::make_unique<cxdbl[]>(rhs.m_nrows * rhs.m_ncols))
+    {
+      const size_t n_total = rhs.m_nrows * rhs.m_ncols;
+      lvl1_zcopy(n_total, rhs.m_data.get(), 1, m_data.get(), 1);
+    }
+
+    template<>
+    inline
+    Matrix<ComplexDbl>::Matrix(const Matrix<ComplexDbl> &rhs)
+        : m_nrows(rhs.m_nrows), m_ncols(rhs.m_ncols),
+        m_data(std::make_unique<ComplexDbl[]>(rhs.m_nrows * rhs.m_ncols))
     {
       const size_t n_total = rhs.m_nrows * rhs.m_ncols;
       lvl1_zcopy(n_total, rhs.m_data.get(), 1, m_data.get(), 1);
@@ -136,6 +152,17 @@ namespace matrix { inline namespace v1 {
       m_nrows = rhs.m_nrows;
       m_ncols = rhs.m_ncols;
       m_data = std::make_unique<cxdbl[]>(rhs.m_nrows * rhs.m_ncols);
+      lvl1_zcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<ComplexDbl>& Matrix<ComplexDbl>::operator=(const Matrix<ComplexDbl> &rhs)
+    {
+      m_nrows = rhs.m_nrows;
+      m_ncols = rhs.m_ncols;
+      m_data = std::make_unique<ComplexDbl[]>(rhs.m_nrows * rhs.m_ncols);
       lvl1_zcopy(m_nrows * m_ncols, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
@@ -243,6 +270,19 @@ namespace matrix { inline namespace v1 {
       lvl1_zaxpy(m_ncols * m_nrows, 1.0, rhs.m_data.get(), 1, m_data.get(), 1);
       return *this;
     }
+    
+    template<>
+    inline
+    Matrix<ComplexDbl>& Matrix<ComplexDbl>::operator+=(const Matrix<ComplexDbl> &rhs)
+    {
+#ifndef NDEBUG
+      if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
+          throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
+#endif
+      assert(rhs.m_nrows == m_nrows && rhs.m_ncols == m_ncols);
+      lvl1_zaxpy(m_ncols * m_nrows, getComplexDblOne(), rhs.m_data.get(), 1, m_data.get(), 1);
+      return *this;
+    }
 
     template<typename T>
     Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &rhs)
@@ -283,6 +323,18 @@ namespace matrix { inline namespace v1 {
       return *this;
     }
 
+    template<>
+    inline
+    Matrix<ComplexDbl>& Matrix<ComplexDbl>::operator-=(const Matrix<ComplexDbl> &rhs)
+    {
+#ifndef NDEBUG
+      if(rhs.m_nrows != m_nrows || rhs.m_ncols != m_ncols)
+          throw MatrixSizeMismatchError("cannot add matrices of different dimensions.");
+#endif
+      lvl1_zaxpy(m_ncols * m_nrows, getComplexDblNegOne(), rhs.m_data.get(), 1, m_data.get(), 1);
+      return *this;
+    }
+
     template<typename T>
     Matrix<T>& Matrix<T>::operator*=(const T &rhs)
     {
@@ -303,6 +355,14 @@ namespace matrix { inline namespace v1 {
     template<>
     inline
     Matrix<cxdbl>& Matrix<cxdbl>::operator*=(const cxdbl &rhs)
+    {
+      lvl1_zscal(m_ncols * m_nrows, rhs, m_data.get(), 1);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<ComplexDbl>& Matrix<ComplexDbl>::operator*=(const ComplexDbl &rhs)
     {
       lvl1_zscal(m_ncols * m_nrows, rhs, m_data.get(), 1);
       return *this;
@@ -333,6 +393,14 @@ namespace matrix { inline namespace v1 {
       return *this;
     }
 
+    template<>
+    inline
+    Matrix<ComplexDbl>& Matrix<ComplexDbl>::operator/=(const ComplexDbl &rhs)
+    {
+      lvl1_zscal(m_nrows * m_ncols, getComplexDblOne()/rhs, m_data.get(), 1);
+      return *this;
+    }
+
     template<typename T>
     Matrix<T>& Matrix<T>::setZero()
     {
@@ -345,7 +413,7 @@ namespace matrix { inline namespace v1 {
       } else if constexpr (is_complex<T>::value) {
           // complex type
           for(size_t i = 0; i < m_nrows * m_ncols; ++i){
-              m_data[i] = T(0.0,0.0);
+              m_data[i] = cx_zero;
           }
       }else {
           for(size_t i = 0; i < m_nrows * m_ncols; ++i){
@@ -372,6 +440,14 @@ namespace matrix { inline namespace v1 {
       return *this;
     }
 
+    template<>
+    inline
+    Matrix<ComplexDbl>& Matrix<ComplexDbl>::setZero()
+    {
+      lvl1_zscal(m_ncols*m_nrows, getComplexDblZero(), m_data.get(), 1);
+      return *this;
+    }
+
     template<typename T>
     Matrix<T>& Matrix<T>::setOne()
     {
@@ -382,7 +458,7 @@ namespace matrix { inline namespace v1 {
           }
       } else if constexpr(is_complex<T>::value){
           for(size_t i = 0; i < m_nrows * m_ncols; ++i){
-              m_data[i] = T(1.0,0);
+              m_data[i] = {1.0, 0.0};
           }
       } else {
           for(size_t i = 0; i < m_nrows * m_ncols; ++i){
@@ -423,6 +499,20 @@ namespace matrix { inline namespace v1 {
       } else{
           throw std::logic_error("non numeric type.");
       }
+    }
+
+    template<>
+    inline
+    Matrix<ComplexDbl>& Matrix<ComplexDbl>::setRandom()
+    {
+      std::random_device rd;
+      std::mt19937 gen(rd());
+      std::uniform_real_distribution<> dist(0.0, 1.0);
+      for(size_t i = 0; i < m_nrows * m_ncols; ++i){
+        m_data[i].r = dist(gen);
+        m_data[i].i = dist(gen);
+      }
+      return *this;
     }
 
     template<typename T>

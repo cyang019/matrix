@@ -126,17 +126,17 @@ namespace matrix {
       if(lhs.m_nrows == 1 && rhs.m_ncols == 1) {
         res.m_data[0] = lvl1_ddot(lhs.m_ncols, lhs.m_data.get(), 1, rhs.m_data.get(), 1);
       } else if(rhs.m_ncols == 1) {
-        lvl2_cblas_dgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans,
+        lvl2_dgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans,
             lhs.m_nrows, lhs.m_ncols, 
             1.0, lhs.m_data.get(), lhs.m_nrows, rhs.m_data.get(), 1,
             0.0, res.m_data.get(), 1);
       } else if(lhs.m_nrows == 1) {
-        lvl2_cblas_dgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasTrans,
+        lvl2_dgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasTrans,
             rhs.m_nrows, rhs.m_ncols,
             1.0, rhs.m_data.get(), rhs.m_nrows, lhs.m_data.get(), 1,
             0.0, res.m_data.get(), 1);
       } else {
-        lvl3_cblas_dgemm(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans, CblasTranspose::CblasNoTrans,
+        lvl3_dgemm(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans, CblasTranspose::CblasNoTrans,
             lhs.m_nrows, rhs.m_ncols, lhs.m_ncols,
             1.0, lhs.m_data.get(), lhs.m_nrows, rhs.m_data.get(), rhs.m_nrows,
             0.0, res.m_data.get(), res.m_nrows);
@@ -158,17 +158,17 @@ namespace matrix {
       if(lhs.m_nrows == 1 && rhs.m_ncols == 1) {
         res.m_data[0] = lvl1_zdot(lhs.m_ncols, lhs.m_data.get(), 1, rhs.m_data.get(), 1);
       } else if(rhs.m_ncols == 1) {
-        lvl2_cblas_zgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans,
+        lvl2_zgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans,
             lhs.m_nrows, lhs.m_ncols, 
             cxdbl(1.0, 0.0), lhs.m_data.get(), lhs.m_nrows, rhs.m_data.get(), 1,
             cxdbl(0.0, 0.0), res.m_data.get(), 1);
       } else if(lhs.m_nrows == 1) {
-        lvl2_cblas_zgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasConjTrans,
+        lvl2_zgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasConjTrans,
             rhs.m_nrows, rhs.m_ncols,
             cxdbl(1.0, 0.0), rhs.m_data.get(), rhs.m_nrows, lhs.m_data.get(), 1,
             cxdbl(0.0, 0.0), res.m_data.get(), 1);
       } else {
-        lvl3_cblas_zgemm(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans, CblasTranspose::CblasNoTrans,
+        lvl3_zgemm(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans, CblasTranspose::CblasNoTrans,
             lhs.m_nrows, rhs.m_ncols, lhs.m_ncols,
             cxdbl(1.0, 0.0), lhs.m_data.get(), lhs.m_nrows, rhs.m_data.get(), rhs.m_nrows,
             cxdbl(0.0, 0.0), res.m_data.get(), res.m_nrows);
