@@ -4,5 +4,6 @@
 #include "blas_wrapper/cblas_level1.h"
 #include "blas_wrapper/cblas_level2.h"
 #include "blas_wrapper/cblas_level3.h"
+#include "blas_wrapper/eigen.h"
 
 #endif

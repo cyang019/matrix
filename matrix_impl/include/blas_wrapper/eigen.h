@@ -19,14 +19,16 @@ namespace matrix {
       zheevx_2stage = 8
     };
 
-    mat_zheev();
-    mat_zheev_2stage();
-    mat_zheevd();
-    mat_zheevd_2stage();
-    mat_zheevr();
-    mat_zheevr_2stage();
-    mat_zheevx();
-    mat_zheevx_2stage();
+    void mat_zheev();
+    void mat_zheev_2stage();
+    void mat_zheevd();
+    void mat_zheevd_2stage();
+    void mat_zheevr();
+    void mat_zheevr_2stage();
+    void mat_zheevx();
+    void mat_zheevx_2stage();
 
   } // namespace v1
 } // namespace matrix
+
+#endif

@@ -62,20 +62,23 @@ namespace matrix {
         template<typename T>
         Matrix<T> operator/(const Matrix<T> &, const T &);
 
+        /// advanced operations
         Matrix<ComplexDbl> exp(const Matrix<ComplexDbl> &);
 
-        template<typename T>
-        std::tuple<Matrix<T>, Matrix<T>> eigenSys(const Matrix<T> &);
+        template<EigenMethod em>
+        std::tuple<Matrix<ComplexDbl>, Matrix<ComplexDbl>> eigenSys(const Matrix<ComplexDbl> &);
 
-        template<typename T>
-        Matrix<T> eigenVal(const Matrix<T> &);
+        template<EigenMethod em>
+        Matrix<ComplexDbl> eigenVal(const Matrix<ComplexDbl> &);
 
         template<typename T>
         Matrix<T> OuterProduct(const Matrix<T> &, const Matrix<T> &);
 
         /// trace of A^T. B
-        template<typename T>
-        T projection(const Matrix<T> &, const Matrix<T> &);
+        double projectionDbl(const Matrix<double> &, const Matrix<double> &);
+
+        /// no need to transpose, directly complex conjugate
+        ComplexDbl projectionHermitian(const Matrix<ComplexDbl> &, const Matrix<ComplexDbl> &);
 
         template<typename T>
         T trace(const Matrix<T> &);
@@ -164,6 +167,8 @@ namespace matrix {
 #include "MatrixImpl.hpp"
 
 #include "OperatorsImpl.hpp"
+
+#include "AdvancedFunctionsImpl.hpp"
 
 
 #endif

@@ -630,7 +630,7 @@ namespace matrix { inline namespace v1 {
       auto ptr_ipiv = std::make_unique<int[]>(m_nrows);
       int errorHandler;
       auto ptr_lwork = std::make_unique<double[]>(
-          m_nrows * 2
+          m_nrows * m_ncols
           );
 
       Matrix<double> result = *this;
@@ -665,7 +665,7 @@ namespace matrix { inline namespace v1 {
       auto ptr_ipiv = std::make_unique<int[]>(m_nrows);
       int errorHandler;
       auto ptr_lwork = std::make_unique<double[]>(
-          m_nrows * 2);
+          m_nrows * m_ncols);
 
       mat_dgetrf(m_nrows, m_ncols, m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
       if(errorHandler > 0){
