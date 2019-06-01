@@ -62,10 +62,23 @@ namespace matrix {
         template<typename T>
         Matrix<T> operator/(const Matrix<T> &, const T &);
 
-        Matrix<cxdbl> exp(const Matrix<cxdbl> &);
+        Matrix<ComplexDbl> exp(const Matrix<ComplexDbl> &);
 
         template<typename T>
-        std::tuple<Matrix<T>, Matrix<T>> eigen_sys(const Matrix<T> &);
+        std::tuple<Matrix<T>, Matrix<T>> eigenSys(const Matrix<T> &);
+
+        template<typename T>
+        Matrix<T> eigenVal(const Matrix<T> &);
+
+        template<typename T>
+        Matrix<T> OuterProduct(const Matrix<T> &, const Matrix<T> &);
+
+        /// trace of A^T. B
+        template<typename T>
+        T projection(const Matrix<T> &, const Matrix<T> &);
+
+        template<typename T>
+        T trace(const Matrix<T> &);
 
         // @brief: column major matrix type.
         template<typename T>
