@@ -31,6 +31,12 @@ namespace matrix {
     void mat_zheevx();
     void mat_zheevx_2stage();
 
+    // helpers
+    // make hermitian matrix upper or lower triangular
+    void zhetrd(char uplo, int n, cxdbl *a, int lda,
+        double *d, double *e, cxdbl *tau,
+        cxdbl *work, int lwork, int *info);
+
   } // namespace v1
 } // namespace matrix
 

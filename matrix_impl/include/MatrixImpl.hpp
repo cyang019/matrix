@@ -38,6 +38,12 @@ namespace matrix { inline namespace v1 {
           auto c_it = r_it->begin(); 
           while(c_it != r_it->end()){
               const size_t idx = at_col * m_nrows + at_row;
+              
+              //if constexpr (is_complex<T>::value) {
+              //  std::cout << "index: " << idx << " " 
+              //            << "r:" << at_row << " c:" << at_col << "\n";
+              //}
+
               m_data[idx] = *c_it;
               ++c_it;
               ++at_col;

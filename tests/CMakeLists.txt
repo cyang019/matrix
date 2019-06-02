@@ -1,7 +1,7 @@
 file(GLOB SRCS *.cpp)
 add_executable(test_matrix ${SRCS})
 
-set(USE_COVERAGE ON)
+set(USE_COVERAGE OFF)
 
 target_link_libraries(
   test_matrix

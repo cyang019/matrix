@@ -9,7 +9,7 @@
 #include <complex>
 #include <random>
 #include <cassert>
-#include <cmath>    // abs
+#include <cmath>    // abs, max
 #include "common.h"
 #include "errors.h"
 #include "blas_wrapper/cblas_functions.h"
