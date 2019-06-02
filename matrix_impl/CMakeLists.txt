@@ -46,9 +46,8 @@ endif()
 
 target_link_libraries(matrix PRIVATE cblas clapack)
 target_include_directories(matrix
-  PRIVATE
-  "${BLAS_INCLUDE_DIR}"
   PUBLIC
+  "${BLAS_INCLUDE_DIR}"
   "${PROJECT_SOURCE_DIR}/matrix_impl/include"
 )
 

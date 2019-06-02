@@ -19,7 +19,10 @@ namespace matrix {
       zheevx_2stage = 8
     };
 
-    void mat_zheev();
+    int mat_zheev(char JOBZ, char UPLO, size_t n, cxdbl *a,
+        size_t lda, 
+        double *w, cxdbl *work, size_t lwork, 
+        double *rwork, int *info);
     void mat_zheev_2stage();
     void mat_zheevd();
     void mat_zheevd_2stage();
