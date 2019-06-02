@@ -32,20 +32,5 @@ namespace matrix {
       cblas_zgemv((CBLAS_ORDER)layout, (CBLAS_TRANSPOSE)TransA,
           (int)m, (int)n, &alpha, A, (int)lda, x, incx, &beta, y, incy);
     }
-
-    void lvl2_zgemv(
-        const CblasOrder &layout, const CblasTranspose &TransA,
-        size_t m, size_t n, ComplexDbl alpha, const ComplexDbl *A, size_t lda,
-        const ComplexDbl *x, int incx, ComplexDbl beta, ComplexDbl *y, int incy)
-    {
-#ifndef NDEBUG
-      if(m >= int_max || n >= int_max || lda >= int_max){
-        throw IndexOutOfBound("matrix dimension cannot exceed INT_MAX.");
-      }
-#endif
-      cblas_zgemv((CBLAS_ORDER)layout, (CBLAS_TRANSPOSE)TransA,
-          (int)m, (int)n, &alpha, A, (int)lda, x, incx, &beta, y, incy);
-    }
-
   } // namespace v1
 } // namespace matrix

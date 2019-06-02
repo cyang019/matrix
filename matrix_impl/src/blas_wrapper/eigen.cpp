@@ -5,9 +5,9 @@
 
 namespace matrix {
   inline namespace v1 {
-    int mat_zheev(char jobz, char uplo, size_t n, ComplexDbl *a,
+    int mat_zheev(char jobz, char uplo, size_t n, cxdbl *a,
         size_t lda, 
-        double *w, ComplexDbl *work, size_t lwork, 
+        double *w, cxdbl *work, size_t lwork, 
         double *rwork, int *info)
     {
 #ifndef NDEBUG
@@ -22,8 +22,8 @@ namespace matrix {
       int dim = (int)n;
       int lower_dim = (int)lda;
       int work_length = (int)lwork;
-      auto clpk_a = static_cast<__CLPK_doublecomplex *>(a);
-      auto clpk_work = static_cast<__CLPK_doublecomplex *>(work);
+      auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
+      auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work);
       int res = zheev_(&jobz, &uplo, &dim, clpk_a, &lower_dim, 
           w, clpk_work, &work_length, rwork, info);
       return res;

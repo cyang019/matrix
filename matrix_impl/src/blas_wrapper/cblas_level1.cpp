@@ -26,16 +26,16 @@ namespace matrix {
       cblas_zscal(n, &alpha, x, incx);
     }
 
-    void lvl1_zscal(size_t n, ComplexDbl alpha, ComplexDbl *x, int incx)
-    {
-      while(n > (size_t)int_max){
-        cblas_zscal(int_max, &alpha, x, incx);
+    //void lvl1_zscal(size_t n, ComplexDbl alpha, ComplexDbl *x, int incx)
+    //{
+    //  while(n > (size_t)int_max){
+    //    cblas_zscal(int_max, &alpha, x, incx);
 
-        n -= (size_t)int_max;
-        x += int_max;
-      }
-      cblas_zscal(n, &alpha, x, incx);
-    }
+    //    n -= (size_t)int_max;
+    //    x += int_max;
+    //  }
+    //  cblas_zscal(n, &alpha, x, incx);
+    //}
 
     void lvl1_zdscal(size_t n, double alpha, cxdbl *x, int incx)
     {
@@ -48,16 +48,16 @@ namespace matrix {
       cblas_zdscal(n, alpha, x, incx);
     }
 
-    void lvl1_zdscal(size_t n, double alpha, ComplexDbl *x, int incx)
-    {
-      while(n > (size_t)int_max){
-        cblas_zdscal(int_max, alpha, x, incx);
+    //void lvl1_zdscal(size_t n, double alpha, ComplexDbl *x, int incx)
+    //{
+    //  while(n > (size_t)int_max){
+    //    cblas_zdscal(int_max, alpha, x, incx);
 
-        n -= (size_t)int_max;
-        x += int_max;
-      }
-      cblas_zdscal(n, alpha, x, incx);
-    }
+    //    n -= (size_t)int_max;
+    //    x += int_max;
+    //  }
+    //  cblas_zdscal(n, alpha, x, incx);
+    //}
 
     void lvl1_dcopy(size_t n, const double *x, int inc_x, double *y, int inc_y)
     {
@@ -103,25 +103,25 @@ namespace matrix {
       return res;
     }
 
-    ComplexDbl lvl1_zdot(size_t n, const ComplexDbl *x, int inc_x, const ComplexDbl *y, int inc_y)
-    {
-      ComplexDbl res = getComplexDblZero();
-      while(n > (size_t)int_max){
-        ComplexDbl temp = getComplexDblZero();
-        cblas_zdotc_sub(int_max, x, inc_x, y, inc_y, &temp);
+    //ComplexDbl lvl1_zdot(size_t n, const ComplexDbl *x, int inc_x, const ComplexDbl *y, int inc_y)
+    //{
+    //  ComplexDbl res = getComplexDblZero();
+    //  while(n > (size_t)int_max){
+    //    ComplexDbl temp = getComplexDblZero();
+    //    cblas_zdotc_sub(int_max, x, inc_x, y, inc_y, &temp);
 
-        n -= (size_t)int_max;
-        x += int_max;
-        y += int_max;
-        res.r += temp.r;
-        res.i += temp.i;
-      }
-      ComplexDbl temp = getComplexDblZero();
-      cblas_zdotc_sub(n, x, inc_x, y, inc_y, &temp);
-      res.r += temp.r;
-      res.i += temp.i;
-      return res;
-    }
+    //    n -= (size_t)int_max;
+    //    x += int_max;
+    //    y += int_max;
+    //    res.r += temp.r;
+    //    res.i += temp.i;
+    //  }
+    //  ComplexDbl temp = getComplexDblZero();
+    //  cblas_zdotc_sub(n, x, inc_x, y, inc_y, &temp);
+    //  res.r += temp.r;
+    //  res.i += temp.i;
+    //  return res;
+    //}
 
     void lvl1_zcopy(size_t n, const cxdbl *x, int inc_x, cxdbl *y, int inc_y)
     {
@@ -135,17 +135,17 @@ namespace matrix {
       cblas_zcopy(n, x, inc_x, y, inc_y);
     }
 
-    void lvl1_zcopy(size_t n, const ComplexDbl *x, int inc_x, ComplexDbl *y, int inc_y)
-    {
-      while(n > (size_t)int_max){
-        cblas_zcopy(int_max, x, inc_x, y, inc_y);
+    //void lvl1_zcopy(size_t n, const ComplexDbl *x, int inc_x, ComplexDbl *y, int inc_y)
+    //{
+    //  while(n > (size_t)int_max){
+    //    cblas_zcopy(int_max, x, inc_x, y, inc_y);
 
-        n -= (size_t)int_max;
-        x += int_max;
-        y += int_max;
-      }
-      cblas_zcopy(n, x, inc_x, y, inc_y);
-    }
+    //    n -= (size_t)int_max;
+    //    x += int_max;
+    //    y += int_max;
+    //  }
+    //  cblas_zcopy(n, x, inc_x, y, inc_y);
+    //}
 
     void lvl1_daxpy(size_t n, double alpha, const double *x, int inc_x, double *y, int inc_y)
     {
@@ -171,17 +171,17 @@ namespace matrix {
       cblas_zaxpy(n, &alpha, x, inc_x, y, inc_y);
     }
 
-    void lvl1_zaxpy(size_t n, ComplexDbl alpha, const ComplexDbl *x, int inc_x, ComplexDbl *y, int inc_y)
-    {
-      while(n > (size_t)int_max){
-        cblas_zaxpy(int_max, &alpha, x, inc_x, y, inc_y);
+    //void lvl1_zaxpy(size_t n, ComplexDbl alpha, const ComplexDbl *x, int inc_x, ComplexDbl *y, int inc_y)
+    //{
+    //  while(n > (size_t)int_max){
+    //    cblas_zaxpy(int_max, &alpha, x, inc_x, y, inc_y);
 
-        n -= (size_t)int_max;
-        x += int_max;
-        y += int_max;
-      }
-      cblas_zaxpy(n, &alpha, x, inc_x, y, inc_y);
-    }
+    //    n -= (size_t)int_max;
+    //    x += int_max;
+    //    y += int_max;
+    //  }
+    //  cblas_zaxpy(n, &alpha, x, inc_x, y, inc_y);
+    //}
   } // namespace v1
 } // namespace matrix
 

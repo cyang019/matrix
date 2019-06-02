@@ -17,12 +17,6 @@ namespace matrix {
         const CblasOrder &layout, const CblasTranspose &TransA,
         size_t m, size_t n, cxdbl alpha, const cxdbl *A, size_t lda,
         const cxdbl *x, int incx, cxdbl beta, cxdbl *y, int incy);
-
-    void lvl2_zgemv(
-        const CblasOrder &layout, const CblasTranspose &TransA,
-        size_t m, size_t n, ComplexDbl alpha, const ComplexDbl *A, size_t lda,
-        const ComplexDbl *x, int incx, ComplexDbl beta, ComplexDbl *y, int incy);
-                
   } // namespace v1
 } // namespace matrix
 
