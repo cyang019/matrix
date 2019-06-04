@@ -39,6 +39,26 @@ namespace matrix {
       return true;
     }
 
+    inline bool allclose(const Matrix<cxdbl> &lhs, const Matrix<cxdbl> &rhs, double eps)
+    {
+      if(lhs.ncols() != rhs.ncols() || lhs.nrows() != rhs.nrows())
+        return false;
+
+      const size_t n_total = lhs.ncols() * lhs.nrows();
+      auto d1 = lhs.data();
+      auto d2 = rhs.data();
+      for(size_t i = 0; i < n_total; ++i){
+        if(std::abs(d1[i].real() - d2[i].real()) > eps){
+          return false;
+        }
+        if(std::abs(d1[i].imag() - d2[i].imag()) > eps){
+          return false;
+        }
+      }
+
+      return true;
+    }
+
     template<typename T>
     Matrix<T> operator+(const Matrix<T> &t_m1, const Matrix<T> &t_m2)
     {

@@ -623,5 +623,15 @@ namespace matrix { inline namespace v1 {
     std::tuple<size_t, size_t> Matrix<T>::shape() const
     { return std::make_tuple(m_nrows, m_ncols); }
 
+    template<typename T>
+    Matrix<T> diagnal(std::initializer_list<T> vals)
+    {
+      Matrix<T> res(vals.size(), vals.size());
+      auto iter = vals.begin();
+      for(size_t i = 0; i < vals.size(); ++i, ++iter){
+        res(i,i) = *iter;
+      }
+      return res;
+    }
 } ///< inline namespace v1
 } ///< namespace matrix

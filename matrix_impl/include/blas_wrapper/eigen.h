@@ -23,9 +23,19 @@ namespace matrix {
         size_t lda, 
         double *w, cxdbl *work, size_t lwork, 
         double *rwork, int *info);
-    void mat_zheev_2stage();
-    void mat_zheevd();
-    void mat_zheevd_2stage();
+
+    int mat_zheevd(char jobz, char uplo, size_t n, cxdbl *a,
+        size_t lda,
+        double *w, cxdbl *work, size_t lwork,
+        double *rwork, size_t lrwork, int*iwork, size_t liwork,
+        int *info);
+
+    // not implemented
+    int mat_zheev_2stage(char JOBZ, char UPLO, size_t n, cxdbl *a,
+        size_t lda, 
+        double *w, cxdbl *work, size_t lwork, 
+        double *rwork, int *info);
+    int mat_zheevd_2stage();
     void mat_zheevr();
     void mat_zheevr_2stage();
     void mat_zheevx();
@@ -33,9 +43,9 @@ namespace matrix {
 
     // helpers
     // make hermitian matrix upper or lower triangular
-    void zhetrd(char uplo, int n, cxdbl *a, int lda,
+    int zhetrd(char uplo, size_t n, cxdbl *a, size_t lda,
         double *d, double *e, cxdbl *tau,
-        cxdbl *work, int lwork, int *info);
+        cxdbl *work, size_t lwork, int *info);
 
   } // namespace v1
 } // namespace matrix

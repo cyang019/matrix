@@ -10,6 +10,7 @@
 #include <random>
 #include <cassert>
 #include <cmath>    // abs, max
+#include <vector>
 #include "common.h"
 #include "errors.h"
 #include "blas_wrapper/cblas_functions.h"
@@ -31,6 +32,7 @@ namespace matrix {
         bool operator!=(const Matrix<T> &, const Matrix<T> &);
 
         bool allclose(const Matrix<double> &, const Matrix<double> &, double);
+        bool allclose(const Matrix<cxdbl> &, const Matrix<cxdbl> &, double);
 
         template<typename T>
         Matrix<T> operator+(const Matrix<T> &, const Matrix<T> &);
@@ -161,6 +163,9 @@ namespace matrix {
           size_t m_ncols;
           std::unique_ptr<T[]> m_data; ///< serialized matrix
         };
+
+        template<typename T>
+        Matrix<T> diagnal(std::initializer_list<T> vals);
     }
 }
 
