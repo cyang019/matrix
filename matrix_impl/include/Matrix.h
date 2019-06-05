@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cmath>    // abs, max
 #include <vector>
+#include <limits>
 #include "common.h"
 #include "errors.h"
 #include "blas_wrapper/cblas_functions.h"

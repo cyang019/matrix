@@ -1,5 +1,5 @@
 namespace matrix { inline namespace v1 {
-        template<EigenMethod em>
+        template<EigenMethod em=EigenMethod::zheevd>
         std::tuple<Matrix<double>, Matrix<cxdbl>> eigenSys(const Matrix<cxdbl> &mat)
         {
 #ifndef NDEBUG
@@ -51,10 +51,43 @@ namespace matrix { inline namespace v1 {
               throw InvalidEigenValue("eigenSys calculation invalid.");
             }
           }
+          else if constexpr(em == EigenMethod::zheevr){
+            constexpr char range = 'A';
+            constexpr double vl = -1; ///< not used
+            constexpr double vu = 1; ///< not used
+            constexpr size_t il = 1; ///< not used
+            size_t iu = n; ///< not used
+            constexpr double abstol = std::numeric_limits<double>::epsilon();
+            const size_t m = n;
+            const size_t ldz = m;
+            const size_t z_dim = (m > 0) ? ldz * m : ldz * 1;
+            auto z = std::make_unique<cxdbl[]>(z_dim);
+            const size_t isuppz_size = (m > 0) ? 2 * m : 2 * 1;
+            auto isuppz = std::make_unique<int[]>(isuppz_size);
+
+            const size_t lwork = (n + 1) * n;
+            auto work = std::make_unique<cxdbl[]>(lwork);
+
+            const size_t lrwork = (m > 0) ? 24 * n : 1;
+            auto rwork = std::make_unique<double[]>(lrwork);
+
+            const size_t liwork = (m > 0) ? 10 * n : 1;
+            auto iwork = std::make_unique<int[]>(liwork);
+
+            int info = 0;
+            mat_zheevr(jobz, range, uplo, n, a.data(), lda,
+                vl, vu, il, iu, abstol, m,
+                eigen_vals.data(), z.get(), ldz, isuppz.get(), 
+                work.get(), lwork, rwork.get(), lrwork,
+                iwork.get(), liwork, &info);
+            if(info != 0){
+              throw InvalidEigenValue("eigenSys calculation invalid.");
+            }
+          }
           return std::make_tuple(std::move(eigen_vals), std::move(a));
         }
 
-        template<EigenMethod em>
+        template<EigenMethod em=EigenMethod::zheevd>
         Matrix<double> eigenVal(const Matrix<cxdbl> &mat)
         {
           const size_t n = mat.nrows();
@@ -93,6 +126,39 @@ namespace matrix { inline namespace v1 {
             int info = 0;
             mat_zheevd(jobz, uplo, n, a.data(), lda,
                 eigen_vals.data(), work.get(), lwork, rwork.get(), lrwork,
+                iwork.get(), liwork, &info);
+            if(info != 0){
+              throw InvalidEigenValue("eigenSys calculation invalid.");
+            }
+          }
+          else if constexpr(em == EigenMethod::zheevr){
+            constexpr char range = 'A';
+            constexpr double vl = -1; ///< not used
+            constexpr double vu = 1; ///< not used
+            constexpr size_t il = 1; ///< not used
+            size_t iu = n; ///< not used
+            constexpr double abstol = std::numeric_limits<double>::epsilon();
+            const size_t m = n;
+            const size_t ldz = m;
+            const size_t z_dim = (m > 0) ? ldz * m : ldz * 1;
+            auto z = std::make_unique<cxdbl[]>(z_dim);
+            const size_t isuppz_size = (m > 0) ? 2 * m : 2 * 1;
+            auto isuppz = std::make_unique<int[]>(isuppz_size);
+
+            const size_t lwork = (n + 1) * n;
+            auto work = std::make_unique<cxdbl[]>(lwork);
+
+            const size_t lrwork = (m > 0) ? 24 * n : 1;
+            auto rwork = std::make_unique<double[]>(lrwork);
+
+            const size_t liwork = (m > 0) ? 10 * n : 1;
+            auto iwork = std::make_unique<int[]>(liwork);
+
+            int info = 0;
+            mat_zheevr(jobz, range, uplo, n, a.data(), lda,
+                vl, vu, il, iu, abstol, m,
+                eigen_vals.data(), z.get(), ldz, isuppz.get(), 
+                work.get(), lwork, rwork.get(), lrwork,
                 iwork.get(), liwork, &info);
             if(info != 0){
               throw InvalidEigenValue("eigenSys calculation invalid.");
