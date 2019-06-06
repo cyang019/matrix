@@ -9,14 +9,12 @@
 #include <complex>
 #include <random>
 #include <cassert>
-#include <cmath>    // abs, max
+#include <cmath>    // abs, max, min
 #include <vector>
 #include <limits>
 #include "common.h"
 #include "errors.h"
 #include "blas_wrapper/cblas_functions.h"
-
-// temperary
 #include <iostream>
 
 
@@ -26,6 +24,9 @@ namespace matrix {
         class Matrix;
 
         //basic operations
+        template<typename T>
+        std::ostream& operator<<(std::ostream &os, const Matrix<T> &m);
+
         template<typename T>
         bool operator==(const Matrix<T> &, const Matrix<T> &);
 
@@ -65,7 +66,9 @@ namespace matrix {
         template<typename T>
         Matrix<T> operator/(const Matrix<T> &, const T &);
 
+        // -------------------------
         /// advanced operations
+        // -------------------------
         Matrix<cxdbl> exp(const Matrix<cxdbl> &);
 
         template<EigenMethod em>
@@ -75,13 +78,12 @@ namespace matrix {
         Matrix<double> eigenVal(const Matrix<cxdbl> &);
 
         template<typename T>
-        Matrix<T> OuterProduct(const Matrix<T> &, const Matrix<T> &);
+        Matrix<T> kroneckerProduct(const Matrix<T> &, const Matrix<T> &);
 
-        /// trace of A^T. B
-        double projectionDbl(const Matrix<double> &, const Matrix<double> &);
-
-        /// no need to transpose, directly complex conjugate
-        cxdbl projectionHermitian(const Matrix<cxdbl> &, const Matrix<cxdbl> &);
+        /// trace of A^T. B or A^H . B
+        /// based on xdot & xdotc
+        template<typename T>
+        T projection(const Matrix<T> &, const Matrix<T> &);
 
         template<typename T>
         T trace(const Matrix<T> &);
@@ -90,6 +92,7 @@ namespace matrix {
         template<typename T>
         class Matrix{
         public:
+          friend std::ostream& operator<<<T>(std::ostream &os, const Matrix<T> &m);
           friend bool operator==<T>(const Matrix<T> &, const Matrix<T> &);
           friend bool operator!=<T>(const Matrix<T> &, const Matrix<T> &);
           friend Matrix<T> operator+<T>(const Matrix<T> &t_m1, const Matrix<T> &t_m2);

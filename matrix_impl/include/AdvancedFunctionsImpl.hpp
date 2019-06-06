@@ -165,6 +165,38 @@ namespace matrix { inline namespace v1 {
             }
           }
           return eigen_vals;
+        }   // eigenVal()
+
+        template<typename T>
+        Matrix<T> kroneckerProduct(const Matrix<T> &m1, const Matrix<T> &m2)
+        {
+          size_t nrows = m1.nrows() * m2.nrows();
+          size_t ncols = m1.ncols() * m2.ncols();
+          Matrix<T> res(nrows, ncols);
+
+          for(size_t c1 = 0; c1 < m1.ncols(); ++c1){
+            for(size_t r1 = 0; r1 < m1.nrows(); ++r1){
+              for(size_t c2 = 0; c2 < m2.ncols(); ++c2){
+                for(size_t r2 = 0; r2 < m2.nrows(); ++r2){
+                  const size_t r = r1*m2.nrows() + r2;
+                  const size_t c = c1*m2.ncols() + c2;
+                  res(r,c) = m1(r1,c1) * m2(r2, c2);
+                }
+              }
+            }
+          }
+          return res;
+        }
+
+        template<typename T>
+        T trace(const Matrix<T> &m)
+        {
+          const size_t min_size = std::min(m.nrows(), m.ncols());
+          T result = 0;
+          for(size_t i = 0; i < min_size; ++i){
+            result += m(i,i);
+          }
+          return result;
         }
 } // namespace v1
 } // namespace matrix

@@ -1,6 +1,18 @@
 namespace matrix {
   inline namespace v1 {
     template<typename T>
+    std::ostream& operator<<(std::ostream &os, const Matrix<T> &m)
+    {
+      for(size_t i = 0; i < m.nrows(); ++i){
+        for(size_t j = 0; j < m.ncols(); ++j){
+          os << m(i,j) << "\t";
+        }
+        os << "\n";
+      }
+      return os;
+    }
+
+    template<typename T>
     bool operator==(const Matrix<T> &lhs, const Matrix<T> &rhs)
     {
       if(lhs.m_ncols != rhs.m_ncols || lhs.m_nrows != rhs.m_nrows)
