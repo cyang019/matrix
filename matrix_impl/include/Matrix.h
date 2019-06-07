@@ -86,6 +86,9 @@ namespace matrix {
         T projection(const Matrix<T> &, const Matrix<T> &);
 
         template<typename T>
+        T projectionNorm(const Matrix<T> &, const Matrix<T> &);
+
+        template<typename T>
         T trace(const Matrix<T> &);
 
         // @brief: column major matrix type.
@@ -158,6 +161,7 @@ namespace matrix {
 
           size_t nrows() const;
           size_t ncols() const;
+          size_t nelements() const { return m_nrows * m_ncols; }
 
           T trace() const;
 

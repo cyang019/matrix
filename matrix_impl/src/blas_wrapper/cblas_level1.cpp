@@ -85,7 +85,7 @@ namespace matrix {
       return res;
     }
 
-    cxdbl lvl1_zdot(size_t n, const cxdbl *x, int inc_x, const cxdbl *y, int inc_y)
+    cxdbl lvl1_zdotc(size_t n, const cxdbl *x, int inc_x, const cxdbl *y, int inc_y)
     {
       cxdbl res = 0;
       while(n > (size_t)int_max){

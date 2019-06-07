@@ -47,6 +47,15 @@ namespace matrix {
     template<typename T> struct is_int : std::false_type {};
     template<>
     struct is_int<int> : std::true_type {};
+
+    constexpr long long int factorial(int n){
+      long long int res = 1;
+      while(n > 1){
+        res *= n;
+        --n;
+      }
+      return res;
+    }
   }
 }
 
