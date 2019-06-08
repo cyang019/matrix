@@ -234,6 +234,44 @@ namespace matrix { inline namespace v1 {
           auto norm = projection<T>(rhs, rhs);
           return val/norm;
         }   // projectionNorm
+
+        
+        template<typename T>
+        Matrix<T> pow(const Matrix<T> &mat, size_t n)
+        {
+#ifndef NDEBUG
+          if(mat.nrows() != mat.ncols()){
+            throw MatrixIsNotSquare("Matrix need to be square for pow().");
+          }
+#endif
+          if (n == 0){
+            return identity<T>(mat.nrows());
+          } else if (n % 2 == 0) {
+            auto res = pow<T>(mat, n/2) * pow<T>(mat, n/2);
+            return res;
+          } else if (n == 1){
+            return mat;
+          } else {
+            auto res = mat * pow<T>(mat, n-1);
+            return res;
+          }
+        }
+
+        template<typename T>
+        T norm1(const Matrix<T> &mat)
+        {
+          T val = 0;
+          for(size_t c = 0; c < mat.ncols(); ++c){
+            T col_sum = 0;
+            for(size_t r = 0; r < mat.nrows(); ++r){
+              col_sum += std::abs(mat(r, c));
+            }
+            if(col_sum > val){
+              val = col_sum;
+            }
+          }
+          return val;
+        }
 } // namespace v1
 } // namespace matrix
 

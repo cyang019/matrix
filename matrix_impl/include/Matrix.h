@@ -70,6 +70,7 @@ namespace matrix {
         /// advanced operations
         // -------------------------
         Matrix<cxdbl> exp(const Matrix<cxdbl> &);
+        Matrix<double> exp(const Matrix<double> &);
 
         template<EigenMethod em>
         std::tuple<Matrix<double>, Matrix<cxdbl>> eigenSys(const Matrix<cxdbl> &);
@@ -90,6 +91,13 @@ namespace matrix {
 
         template<typename T>
         T trace(const Matrix<T> &);
+
+        template<typename T>
+        Matrix<T> pow(const Matrix<T> &, size_t);
+
+        // the maximum absolute column sum of a matrix
+        template<typename T>
+        T norm1(const Matrix<T> &);
 
         // @brief: column major matrix type.
         template<typename T>
@@ -174,6 +182,12 @@ namespace matrix {
 
         template<typename T>
         Matrix<T> diagnal(std::initializer_list<T> vals);
+
+        template<typename T>
+        Matrix<T> identity(size_t n);
+
+        template<typename T>
+        Matrix<T> zeros(size_t nrows, size_t ncols);
     }
 }
 
@@ -182,6 +196,8 @@ namespace matrix {
 #include "OperatorsImpl.hpp"
 
 #include "AdvancedFunctionsImpl.hpp"
+
+#include "MatrixExponential.hpp"
 
 
 #endif

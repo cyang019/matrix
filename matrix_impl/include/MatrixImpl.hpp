@@ -629,7 +629,42 @@ namespace matrix { inline namespace v1 {
       Matrix<T> res(vals.size(), vals.size());
       auto iter = vals.begin();
       for(size_t i = 0; i < vals.size(); ++i, ++iter){
-        res(i,i) = *iter;
+        for(size_t j = 0; j < vals.size(); ++j){
+          if(i != j){
+            res(j, i) = 0;
+          }
+          else{
+            res(i,i) = *iter;
+          }
+        }
+      }
+      return res;
+    }
+
+    template<typename T>
+    Matrix<T> identity(size_t n)
+    {
+      auto res = Matrix<T>(n, n);
+      for(size_t i = 0; i < n; ++i){
+        for(size_t j = 0; j < n; ++j){
+          if(i != j){
+            res(j, i) = 0;
+          } else {
+            res(i, j) = 1;
+          }
+        }
+      }
+      return res;
+    }
+
+    template<typename T>
+    Matrix<T> zeros(size_t nrows, size_t ncols)
+    {
+      auto res = Matrix<T>(nrows, ncols);
+      for(size_t i = 0; i < ncols; ++i){
+        for(size_t j = 0; j < nrows; ++j){
+          res(j, i) = 0;
+        }
       }
       return res;
     }
