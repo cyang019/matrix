@@ -5,5 +5,6 @@
 #include "blas_wrapper/cblas_level2.h"
 #include "blas_wrapper/cblas_level3.h"
 #include "blas_wrapper/eigen.h"
+#include "blas_wrapper/linsol.h"
 
 #endif

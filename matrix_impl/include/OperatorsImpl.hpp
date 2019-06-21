@@ -144,6 +144,26 @@ namespace matrix {
       return res;
     }
 
+    template<typename T>
+    Matrix<T> operator*(const Matrix<T> &lhs, const T &rhs)
+    {
+      auto res = lhs;
+      for(size_t i = 0; i < res.nelements(); ++i){
+        res *= rhs;
+      }
+      return res;
+    }
+
+    template<typename T>
+    Matrix<T> operator*(const T &lhs, const Matrix<T> &rhs)
+    {
+      auto res = rhs;
+      for(size_t i = 0; i < res.nelements(); ++i){
+        res *= lhs;
+      }
+      return res;
+    }
+
     template<>
     inline
     Matrix<double> operator*(const Matrix<double> &lhs, const Matrix<double> &rhs)

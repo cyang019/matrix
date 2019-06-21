@@ -13,19 +13,6 @@ namespace matrix {
     constexpr int int_max = std::numeric_limits<int>::max();
     constexpr cxdbl cx_zero = 0;
 
-    // complex double
-    // To be compatible with lapack
-    //using ComplexDbl = __CLPK_doublecomplex; ///< struct { double r, i; };
-
-    //ComplexDbl operator+(const ComplexDbl &lhs, const ComplexDbl &rhs);
-    //ComplexDbl operator-(const ComplexDbl &lhs, const ComplexDbl &rhs);
-    //ComplexDbl operator*(const ComplexDbl &lhs, const ComplexDbl &rhs);
-    //ComplexDbl operator/(const ComplexDbl &lhs, const ComplexDbl &rhs);
-    //ComplexDbl conj(const ComplexDbl &num);
-    //ComplexDbl getComplexDblZero();
-    //ComplexDbl getComplexDblOne();
-    //ComplexDbl getComplexDblNegOne();
-
     template <typename T> using static_not = std::integral_constant<bool, !T::value>;
 
     template <typename T> struct is_default : std::true_type {};
@@ -48,13 +35,17 @@ namespace matrix {
     template<>
     struct is_int<int> : std::true_type {};
 
-    constexpr long long int factorial(int n){
-      long long int res = 1;
-      while(n > 1){
-        res *= n;
-        --n;
+    template<typename T>
+    bool approxEqual(T num1, T num2, double e)
+    {
+      if constexpr(is_complex<T>::value){
+        if(std::abs(num1.real() - num2.real()) > e) return false;
+        if(std::abs(num1.imag() - num2.imag()) > e) return false;
+        return true;
+      } else {
+        if(std::abs(num1 - num2) < e) return true;
+        return false;
       }
-      return res;
     }
   }
 }

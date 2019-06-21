@@ -296,6 +296,56 @@ namespace matrix { inline namespace v1 {
       return *this;
     }
 
+    template<typename T>
+    Matrix<T>& Matrix<T>::operator*=(const Matrix<T> &rhs)
+    {
+#ifndef NDEBUG
+      if(m_ncols != rhs.m_nrows){
+        throw MultiplicationError(
+            "A of size a1 x a2 times B of size b1 x b2: a2 should equal b1.");
+      }
+#endif
+      auto new_data = std::make_unique<T[]>(m_nrows * rhs.m_ncols);
+      for(size_t c2 = 0; c2 < rhs.m_ncols; ++c2){
+        for(size_t r1 = 0; r1 < m_nrows; ++r1){
+          // the dot product to produce (r1, c2) element
+          new_data[c2 * m_nrows + r1] = 0;
+          for(size_t c1 = 0; c1 < m_ncols; ++c1){
+            size_t pos2 = rhs.m_nrows * c2;
+            for(size_t r2 = 0; r2 < rhs.m_nrows; ++r2) {  ///< column major layout
+              new_data[c2 * m_nrows + r1] += m_data[c1 * m_nrows + r1] * rhs.m_data[pos2];
+              ++pos2;
+            }
+          }
+        }
+      }
+      m_data = std::move(new_data);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<double>& Matrix<double>::operator*=(const Matrix<double> &rhs)
+    {
+#ifndef NDEBUG
+      if(m_ncols != rhs.m_nrows){
+        throw MultiplicationError(
+            "A of size a1 x a2 times B of size b1 x b2: a2 should equal b1.");
+      }
+#endif
+      auto new_data = std::make_unique<double[]>(m_nrows * rhs.m_ncols);
+      lvl3_dgemm(CblasOrder::CblasColMajor,
+          CblasTranspose::CblasNoTrans,
+          CblasTranspose::CblasNoTrans,
+          m_nrows, rhs.m_ncols, m_ncols,
+          1.0, m_data.get(), m_nrows, rhs.data(), rhs.m_nrows,
+          0.0, new_data.get(), m_nrows);
+
+      m_data = std::move(new_data);
+      return *this;
+    }
+
+
     template<>
     inline
     Matrix<double>& Matrix<double>::operator*=(const double &rhs)
@@ -311,6 +361,14 @@ namespace matrix { inline namespace v1 {
       lvl1_zscal(m_ncols * m_nrows, rhs, m_data.get(), 1);
       return *this;
     }
+
+    inline
+    Matrix<cxdbl>& operator*=(Matrix<cxdbl> &lhs, const double &rhs)
+    {
+      lvl1_zdscal(lhs.ncols() * lhs.nrows(), rhs, lhs.data(), 1);
+      return lhs;
+    }
+
 
     template<typename T>
     Matrix<T>& Matrix<T>::operator/=(const T &rhs)
@@ -395,6 +453,34 @@ namespace matrix { inline namespace v1 {
       }
 
       return *this;
+    }
+
+    template<typename T>
+    Matrix<T>& Matrix<T>::row(size_t r)
+    {
+#ifndef NDEBUG
+      if(r >= m_nrows)
+        throw IndexOutOfBound("row number out of bound.");
+#endif
+      Matrix<T> res(1, m_ncols);
+      for(size_t i = 0; i < m_ncols; ++i){
+        res.m_data[i] = m_data[i*m_nrows + r]; 
+      }
+      return res;
+    }
+
+    template<typename T>
+    Matrix<T>& Matrix<T>::col(size_t c)
+    {
+#ifndef NDEBUG
+      if(c >= m_ncols)
+        throw IndexOutOfBound("column number out of bound.");
+#endif
+      Matrix<T> res(m_nrows, 1);
+      for(size_t i = 0; i < m_nrows; ++i){
+        res.m_data[i] = m_data[c*m_nrows + i]; 
+      }
+      return res;
     }
 
     template<typename T>
@@ -667,6 +753,49 @@ namespace matrix { inline namespace v1 {
         }
       }
       return res;
+    }
+
+    template<typename T>
+    Matrix<T> ones(size_t nrows, size_t ncols)
+    {
+      auto res = Matrix<T>(nrows, ncols);
+      for(size_t i = 0; i < ncols; ++i){
+        for(size_t j = 0; j < nrows; ++j){
+          res(j, i) = 1;
+        }
+      }
+      return res;
+    }
+
+    template<typename T>
+    Matrix<T> sign(const Matrix<T> &mat)
+    {
+      if constexpr(is_complex<T>::value){
+        auto res = mat;
+        auto ptr_res = res.data();
+        for(size_t i = 0; i < res.nelements(); ++i){
+          const auto abs_val = std::abs(*ptr_res);
+          if(abs_val < eps){
+            *ptr_res = 1;
+          } else {
+            *ptr_res /= abs_val;
+          }
+          ++ptr_res;
+        }
+        return res;
+      } else {
+        auto res = Matrix<T>(mat.nrows(), mat.ncols());
+        auto ptr_res = res.data();
+        auto ptr_mat = mat.data();
+        for(size_t i = 0; i < res.nelements(); ++i){
+          if(*ptr_mat > -eps) *ptr_res = 1;
+          else *ptr_res = -1;
+          ++ptr_res;
+          ++ptr_mat;
+        }
+
+        return res;
+      }
     }
 } ///< inline namespace v1
 } ///< namespace matrix

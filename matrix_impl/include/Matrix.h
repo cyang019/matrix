@@ -11,11 +11,17 @@
 #include <cassert>
 #include <cmath>    // abs, max, min
 #include <vector>
+#include <unordered_set>
+#include <algorithm>  // sort
+#include <functional> // less
 #include <limits>
+#include <iostream>
+#include <sstream>
+#include <cstdint>   // uint32_t
+#include <cstdlib>    // rand, srand
 #include "common.h"
 #include "errors.h"
 #include "blas_wrapper/cblas_functions.h"
-#include <iostream>
 
 
 namespace matrix {
@@ -69,8 +75,17 @@ namespace matrix {
         // -------------------------
         /// advanced operations
         // -------------------------
-        Matrix<cxdbl> exp(const Matrix<cxdbl> &);
-        Matrix<double> exp(const Matrix<double> &);
+        template<typename T>
+        Matrix<T> abs(const Matrix<T> &);
+
+        template<typename T>
+        Matrix<T> exp(const Matrix<T> &);
+
+        /// solves for A * X = B
+        /// A is a square matrix
+        /// A & B will be destroyed after this function
+        template<typename T>
+        Matrix<T> linearSolveSq(Matrix<T> &, Matrix<T> &);
 
         template<EigenMethod em>
         std::tuple<Matrix<double>, Matrix<cxdbl>> eigenSys(const Matrix<cxdbl> &);
@@ -93,7 +108,7 @@ namespace matrix {
         T trace(const Matrix<T> &);
 
         template<typename T>
-        Matrix<T> pow(const Matrix<T> &, size_t);
+        Matrix<T> pow(const Matrix<T> &, std::uint64_t);
 
         // the maximum absolute column sum of a matrix
         template<typename T>
@@ -144,10 +159,14 @@ namespace matrix {
           Matrix<T>& operator-=(const T &);
 
           Matrix<T>& operator*=(const T &);
+          Matrix<T>& operator*=(const Matrix<T> &);
           Matrix<T>& operator/=(const T &);
           Matrix<T>& setZero();
           Matrix<T>& setOne();
           Matrix<T>& setRandom();
+
+          Matrix<T>& row(size_t);
+          Matrix<T>& col(size_t);
 
           T& operator()(size_t, size_t) const;
           T& operator()(size_t, size_t);
@@ -188,6 +207,14 @@ namespace matrix {
 
         template<typename T>
         Matrix<T> zeros(size_t nrows, size_t ncols);
+
+        template<typename T>
+        Matrix<T> ones(size_t nrows, size_t ncols);
+
+        /// for double mat, either 1 or -1
+        /// for complex<double> mat, a_ij/|a_ij|, sign(0) = 1
+        template<typename T>
+        Matrix<T> sign(const Matrix<T> &);
     }
 }
 

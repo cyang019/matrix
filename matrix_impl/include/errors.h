@@ -50,6 +50,16 @@ namespace matrix {
       public:
         using std::logic_error::logic_error;
     };
+
+    class IllegalValue : public std::logic_error {
+      public:
+        using std::logic_error::logic_error;
+    };
+
+    class SingularMatrix : public std::logic_error {
+      public:
+        using std::logic_error::logic_error;
+    };
   }
 }
 

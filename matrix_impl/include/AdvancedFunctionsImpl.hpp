@@ -237,7 +237,7 @@ namespace matrix { inline namespace v1 {
 
         
         template<typename T>
-        Matrix<T> pow(const Matrix<T> &mat, size_t n)
+        Matrix<T> pow(const Matrix<T> &mat, std::uint64_t n)
         {
 #ifndef NDEBUG
           if(mat.nrows() != mat.ncols()){
@@ -271,6 +271,61 @@ namespace matrix { inline namespace v1 {
             }
           }
           return val;
+        }
+
+
+        template<typename T>
+        Matrix<T> abs(const Matrix<T> &mat)
+        {
+          auto res = mat;
+          for(size_t i = 0; i < mat.ncols(); ++i){
+            for(size_t j = 0; j < mat.nrows(); ++j){
+              res(j, i) = std::abs(res(j, i));
+            }
+          }
+          return res;
+        }
+
+
+        // solves for A * X = B
+        template<typename T>
+        Matrix<T> linearSolveSq(Matrix<T> &A, Matrix<T> &B)
+        {
+#ifndef NDEBUG
+          if(A.nrows() != B.nrows()){
+            throw MatrixSizeMismatchError("A *  X = B A.nrows() needs to be the same as B.nrows()");
+          }
+          if(A.nrows() != A.ncols()){
+            throw MatrixSizeMismatchError("A needs to be square.");
+          }
+#endif
+          const size_t n = A.nrows();
+          const size_t nrhs = B.ncols();
+          auto ptr_ipiv = std::make_unique<int[]>(n);
+          int info = 0;
+          if constexpr(is_complex<T>::value){
+            mat_zgesv(n, nrhs, A.data(), n, ptr_ipiv.get(), B.data(), n, &info);
+          } else {
+            mat_dgesv(n, nrhs, A.data(), n, ptr_ipiv.get(), B.data(), n, &info);
+          }
+          if (info < 0) {
+            std::ostringstream oss("Argument  has an illegal value at: ", std::ios_base::ate);
+            oss << -info << ".";
+            throw IllegalValue(oss.str());
+          } else if (info > 0) {
+            std::ostringstream oss("U(", std::ios_base::ate);
+            oss << info << "," << info << ") is exactly zero.";
+            throw SingularMatrix(oss.str());
+          }
+          auto res = Matrix<T>(n, nrhs);
+
+          for(size_t i = 0; i < n; ++i){
+            const size_t r = ptr_ipiv[i];
+            for(size_t j = 0; j < nrhs; ++j){
+              res(i, j) = B(r, j);
+            }
+          }
+          return res;
         }
 } // namespace v1
 } // namespace matrix
