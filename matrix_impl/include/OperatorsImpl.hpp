@@ -207,9 +207,7 @@ namespace matrix {
       }
 #endif
       Matrix<cxdbl> res(lhs.m_nrows, rhs.m_ncols);
-      if(lhs.m_nrows == 1 && rhs.m_ncols == 1) {
-        res.m_data[0] = lvl1_zdotc(lhs.m_ncols, lhs.m_data.get(), 1, rhs.m_data.get(), 1);
-      } else if(rhs.m_ncols == 1) {
+      if(rhs.m_ncols == 1) {
         lvl2_zgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans,
             lhs.m_nrows, lhs.m_ncols, 
             cxdbl(1.0, 0.0), lhs.m_data.get(), lhs.m_nrows, rhs.m_data.get(), 1,

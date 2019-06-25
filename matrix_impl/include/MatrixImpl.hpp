@@ -334,12 +334,60 @@ namespace matrix { inline namespace v1 {
       }
 #endif
       auto new_data = std::make_unique<double[]>(m_nrows * rhs.m_ncols);
-      lvl3_dgemm(CblasOrder::CblasColMajor,
-          CblasTranspose::CblasNoTrans,
-          CblasTranspose::CblasNoTrans,
-          m_nrows, rhs.m_ncols, m_ncols,
-          1.0, m_data.get(), m_nrows, rhs.data(), rhs.m_nrows,
-          0.0, new_data.get(), m_nrows);
+      if(m_nrows == 1 && rhs.m_ncols == 1){
+        new_data[0] = lvl1_ddot(m_ncols, m_data.get(), 1, rhs.m_data.get(), 1);
+      } else if(rhs.m_ncols == 1){
+        lvl2_dgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans,
+            m_nrows, m_ncols,
+            1.0, m_data.get(), m_nrows, rhs.m_data.get(), 1,
+            0.0, new_data.get(), 1);
+      } else if(m_nrows == 1){
+        lvl2_dgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasTrans,
+            rhs.m_nrows, rhs.m_ncols,
+            1.0, rhs.m_data.get(), rhs.m_nrows, m_data.get(), 1,
+            0.0, new_data.get(), 1);
+      } else {
+        lvl3_dgemm(CblasOrder::CblasColMajor,
+            CblasTranspose::CblasNoTrans,
+            CblasTranspose::CblasNoTrans,
+            m_nrows, rhs.m_ncols, m_ncols,
+            1.0, m_data.get(), m_nrows, rhs.data(), rhs.m_nrows,
+            0.0, new_data.get(), m_nrows);
+      }
+
+      m_data = std::move(new_data);
+      return *this;
+    }
+
+    template<>
+    inline
+    Matrix<cxdbl>& Matrix<cxdbl>::operator*=(const Matrix<cxdbl> &rhs)
+    {
+#ifndef NDEBUG
+      if(m_ncols != rhs.m_nrows){
+        throw MultiplicationError(
+            "A of size a1 x a2 times B of size b1 x b2: a2 should equal b1.");
+      }
+#endif
+      auto new_data = std::make_unique<cxdbl[]>(m_nrows * rhs.m_ncols);
+      if(rhs.m_ncols == 1){
+        lvl2_zgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasNoTrans,
+            m_nrows, m_ncols,
+            1.0, m_data.get(), m_nrows, rhs.m_data.get(), 1,
+            0.0, new_data.get(), 1);
+      } else if(m_nrows == 1){
+        lvl2_zgemv(CblasOrder::CblasColMajor, CblasTranspose::CblasTrans,
+            rhs.m_nrows, rhs.m_ncols,
+            1.0, rhs.m_data.get(), rhs.m_nrows, m_data.get(), 1,
+            0.0, new_data.get(), 1);
+      } else {
+        lvl3_zgemm(CblasOrder::CblasColMajor,
+            CblasTranspose::CblasNoTrans,
+            CblasTranspose::CblasNoTrans,
+            m_nrows, rhs.m_ncols, m_ncols,
+            1.0, m_data.get(), m_nrows, rhs.data(), rhs.m_nrows,
+            0.0, new_data.get(), m_nrows);
+      }
 
       m_data = std::move(new_data);
       return *this;

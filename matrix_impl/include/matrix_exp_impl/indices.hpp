@@ -22,6 +22,7 @@ namespace matrix { inline namespace v1 {
             case 1: return 60.0;
             case 2: return 12.0;
             case 3: return 1.0;
+            default: return 0;
           }
           break;
         case 5:
@@ -32,6 +33,7 @@ namespace matrix { inline namespace v1 {
             case 3: return 420.0;
             case 4: return 30.0;
             case 5: return 1.0;
+            default: return 0;
           }
           break;
         case 7:
@@ -44,6 +46,7 @@ namespace matrix { inline namespace v1 {
             case 5: return 1512.0;
             case 6: return 56.0;
             case 7: return 1.0;
+            default: return 0;
           }
           break;
         case 9:
@@ -58,6 +61,7 @@ namespace matrix { inline namespace v1 {
             case 7: return 3960.0;
             case 8: return 90.0;
             case 9: return 1.0;
+            default: return 0;
           }
           break;
         case 11:
@@ -74,6 +78,7 @@ namespace matrix { inline namespace v1 {
             case 9: return 8580.0;
             case 10: return 132.0;
             case 11: return 1.0;
+            default: return 0;
           }
           break;
         case 13:
@@ -92,9 +97,11 @@ namespace matrix { inline namespace v1 {
             case 11: return 16380.0;
             case 12: return 182.0;
             case 13: return 1.0;
+            default: return 0;
           }
           break;
-        default: return 0.0;
+        default: 
+          return 0.0;
       }
     } // b()
 
