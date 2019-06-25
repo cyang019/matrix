@@ -9,8 +9,8 @@ namespace matrix { inline namespace v1 {
     template<typename T>
     Matrix<T> exp(const Matrix<T> &mat)
     {
-      const auto A0 = identity(mat.nrows());
-      const auto A2 = mat * mat;
+      const auto A0 = identity<T>(mat.nrows());
+      auto A2 = mat * mat;
       double d6 = std::pow(normest(A2, 3), 1.0/6);
       const double eta_1 = std::max(std::pow(normest(A2, 2), 0.25), d6);
       if(eta_1 < theta_3 + eps && ell(mat, 3) == 0){
@@ -21,7 +21,7 @@ namespace matrix { inline namespace v1 {
         Matrix<T> r3 = linearSolveSq(q3, p3);
         return r3;
       }
-      const auto A4 = A2 * A2;
+      auto A4 = A2 * A2;
       const double d4 = std::pow(norm1(A4), 0.25);
       const double eta_2 = std::max(d4, d6);
       if(eta_2 < theta_5 + eps && ell(mat, 5) == 0){
@@ -32,7 +32,7 @@ namespace matrix { inline namespace v1 {
         Matrix<T> r5 = linearSolveSq(q5, p5);
         return r5;
       }
-      const auto A6 = A4 * A2;
+      auto A6 = A4 * A2;
       d6 = std::pow(norm1(A6), 1.0/6);
       const double d8 = std::pow(normest(A4, 2), 0.125);
       const double eta_3 = std::max(d6, d8);
@@ -60,12 +60,12 @@ namespace matrix { inline namespace v1 {
       const double val = std::log2(eta_5/theta_13);
       int s = (int)std::max(std::ceil(val), 0.0);
       s += ell(std::pow(2, -s) * mat, 13);
-      mat *= std::pow(0.5, s);
+      Matrix<T> A1 = mat * std::pow(0.5, s);
       A2 *= std::pow(0.5, 2*s); 
       A4 *= std::pow(0.5, 4*s);
       A6 *= std::pow(0.5, 6*s);
 
-      Matrix<T> u13 = mat * (A6 * (b(13, 13) * A6 + b(13, 11) * A4 + b(13, 9) * A2) 
+      Matrix<T> u13 = A1 * (A6 * (b(13, 13) * A6 + b(13, 11) * A4 + b(13, 9) * A2) 
                            + b(13, 7) * A6 + b(13, 5) * A4 + b(13, 3) * A2
                            + b(13, 1) * A0);
       Matrix<T> v13 = A6 * (b(13, 12) * A6 + b(13, 10) * A4 + b(13, 8) * A2)

@@ -23,7 +23,7 @@ namespace matrix {
       auto clpk_b = reinterpret_cast<__CLPK_doublecomplex *>(b);
       int res = zgesv_(&dim1, &dim2, clpk_a, &lower_dim_a,
           ipiv, clpk_b, &lower_dim_b, info);
-      return res
+      return res;
     }
 
     int mat_dgesv(
@@ -42,7 +42,7 @@ namespace matrix {
 
       int res = dgesv_(&dim1, &dim2, a, &lower_dim_a,
           ipiv, b, &lower_dim_b, info);
-      return res
+      return res;
     }
   } // namespace v1
 } // namespace matrix

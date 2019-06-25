@@ -15,7 +15,7 @@ namespace {
       ASSERT_DOUBLE_EQ(-0.5, vals(0,0));
       ASSERT_DOUBLE_EQ(0.5, vals(1,0));
 
-      MatrixCD m1 = matrix::diagnal({cxdbl(1.0,0), cxdbl(2.0,0), cxdbl(3.0,0)});
+      MatrixCD m1 = matrix::diagonal({cxdbl(1.0,0), cxdbl(2.0,0), cxdbl(3.0,0)});
       auto vals1 = matrix::eigenVal<matrix::EigenMethod::zheev>(m1);
       ASSERT_EQ(3, vals1.nrows());
       ASSERT_DOUBLE_EQ(1.0, vals1(0,0));
@@ -56,7 +56,7 @@ namespace {
       ASSERT_DOUBLE_EQ(-0.5, vals(0,0));
       ASSERT_DOUBLE_EQ(0.5, vals(1,0));
 
-      MatrixCD m1 = matrix::diagnal({cxdbl(1.0,0), cxdbl(2.0,0), cxdbl(3.0,0)});
+      MatrixCD m1 = matrix::diagonal({cxdbl(1.0,0), cxdbl(2.0,0), cxdbl(3.0,0)});
       auto vals1 = matrix::eigenVal<matrix::EigenMethod::zheevd>(m1);
       ASSERT_EQ(3, vals1.nrows());
       ASSERT_DOUBLE_EQ(1.0, vals1(0,0));
@@ -97,7 +97,7 @@ namespace {
       ASSERT_DOUBLE_EQ(-0.5, vals(0,0));
       ASSERT_DOUBLE_EQ(0.5, vals(1,0));
 
-      MatrixCD m1 = matrix::diagnal({cxdbl(1.0,0), cxdbl(2.0,0), cxdbl(3.0,0)});
+      MatrixCD m1 = matrix::diagonal({cxdbl(1.0,0), cxdbl(2.0,0), cxdbl(3.0,0)});
       auto vals1 = matrix::eigenVal<matrix::EigenMethod::zheevr>(m1);
       ASSERT_EQ(3, vals1.nrows());
       ASSERT_DOUBLE_EQ(1.0, vals1(0,0));

@@ -758,7 +758,7 @@ namespace matrix { inline namespace v1 {
     { return std::make_tuple(m_nrows, m_ncols); }
 
     template<typename T>
-    Matrix<T> diagnal(std::initializer_list<T> vals)
+    Matrix<T> diagonal(std::initializer_list<T> vals)
     {
       Matrix<T> res(vals.size(), vals.size());
       auto iter = vals.begin();

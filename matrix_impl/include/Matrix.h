@@ -200,7 +200,7 @@ namespace matrix {
         };
 
         template<typename T>
-        Matrix<T> diagnal(std::initializer_list<T> vals);
+        Matrix<T> diagonal(std::initializer_list<T> vals);
 
         template<typename T>
         Matrix<T> identity(size_t n);

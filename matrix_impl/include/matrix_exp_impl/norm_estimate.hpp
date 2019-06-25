@@ -38,7 +38,7 @@ namespace matrix { inline namespace v1 {
       auto ptr_c2 = A2.data() + c2 * A2.nrows();
       for(size_t i = 0; i < A1.nrows(); ++i){
         if (!approxEqual(*ptr_c1, *ptr_c2, 2*eps)) same_direction = false; 
-        if (!approxEqual(*ptr_c1, -(*ptr_c2, 2*eps))) opposite_direction = false;
+        if (!approxEqual(*ptr_c1, -(*ptr_c2), 2*eps)) opposite_direction = false;
         if (!same_direction && !opposite_direction) return false;
       }
       return same_direction || opposite_direction;
@@ -53,7 +53,7 @@ namespace matrix { inline namespace v1 {
       }
 #endif
       double res = 0.0;
-      const auto pos = mat.data() + c * mat.nrows();
+      auto pos = mat.data() + c * mat.nrows();
       for(size_t i = 0; i < mat.nrows(); ++i){
         res += std::abs(*pos);
         ++pos;
