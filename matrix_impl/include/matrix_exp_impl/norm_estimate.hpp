@@ -32,16 +32,30 @@ namespace matrix { inline namespace v1 {
         throw MatrixSizeMismatchError("two columns need to have the same number of columns");
       }
 #endif
-      bool same_direction = true;
-      bool opposite_direction = true;
       auto ptr_c1 = A1.data() + c1 * A1.nrows();
       auto ptr_c2 = A2.data() + c2 * A2.nrows();
+      double ratio = 0;
       for(size_t i = 0; i < A1.nrows(); ++i){
-        if (!approxEqual(*ptr_c1, *ptr_c2, 2*eps)) same_direction = false; 
-        if (!approxEqual(*ptr_c1, -(*ptr_c2), 2*eps)) opposite_direction = false;
-        if (!same_direction && !opposite_direction) return false;
+        if (approxEqual(*ptr_c1, 0.0, 10*eps)) {
+          if(!approxEqual(0.0, *ptr_c2, 10*eps)) return false;
+          else continue;
+        }
+        else if (approxEqual(*ptr_c2, 0.0, 10*eps)){
+          if(!approxEqual(*ptr_c1, 0.0, 10*eps)) return false;
+          else continue;
+        } else {
+          if (std::abs(ratio) < 10*eps){
+            ratio = *ptr_c1 / *ptr_c2;
+          } else {
+            const T val = *ptr_c1 / *ptr_c2;
+            if (!approxEqual(ratio, val, 10*eps)) return false;
+          }
+        }
+
+        ++ptr_c1;
+        ++ptr_c2;
       }
-      return same_direction || opposite_direction;
+      return true;
     }
 
     template<typename T>
@@ -147,12 +161,12 @@ namespace matrix { inline namespace v1 {
               while(j < S.ncols()){
                 if(areParallel(S, i, S, j)){
                   has_parallel = true;
-                  populateRandomOnesAndNegOnes(S, i);
+                  populateRandomOnesAndNegOnes(S, j);
                   break;
                 }
                 ++j;
               }
-              if(j == S.ncols()) has_parallel = false;
+              if(j >= S.ncols()) has_parallel = false;
               if(has_parallel) break;
               j = 0;
               while(j < S_old.ncols()){
@@ -163,7 +177,7 @@ namespace matrix { inline namespace v1 {
                 }
                 ++j;
               }
-              if(j == S_old.ncols()) has_parallel = false;
+              if(j >= S_old.ncols()) has_parallel = false;
               if(has_parallel) break;
             }
           }

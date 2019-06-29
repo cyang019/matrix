@@ -36,14 +36,14 @@ namespace matrix {
     struct is_int<int> : std::true_type {};
 
     template<typename T>
-    bool approxEqual(T num1, T num2, double e)
+    bool approxEqual(const T &num1, const T &num2, double e)
     {
       if constexpr(is_complex<T>::value){
         if(std::abs(num1.real() - num2.real()) > e) return false;
         if(std::abs(num1.imag() - num2.imag()) > e) return false;
         return true;
       } else {
-        if(std::abs(num1 - num2) < e) return true;
+        if(std::abs(num1 - num2) <= e) return true;
         return false;
       }
     }
