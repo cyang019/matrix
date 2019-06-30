@@ -54,6 +54,40 @@ namespace matrix { inline namespace v1 {
     }
 
     template<typename T>
+    template<typename U,
+             std::enable_if_t<is_complex<U>::value, int>>
+    Matrix<T>::Matrix(std::initializer_list<std::initializer_list<double>> il)
+        : m_nrows(il.size()), m_ncols(0)
+    {
+      auto r_it = il.begin();
+      for(; r_it != il.end(); ++r_it){
+          if(m_ncols == 0){
+            m_ncols = r_it->size();
+          }
+          else if(r_it->size() != m_ncols){
+            throw(MatrixColsSizeUnevenError("Initializer size error."));
+          }
+      }   ///< find number of columns
+      m_data = std::make_unique<T[]>(m_nrows * m_ncols);
+
+      size_t at_row = 0;
+      r_it = il.begin();
+      while(r_it!=il.end()){
+          size_t at_col = 0;
+          auto c_it = r_it->begin(); 
+          while(c_it != r_it->end()){
+              const size_t idx = at_col * m_nrows + at_row;
+              
+              m_data[idx] = cxdbl(*c_it,0);
+              ++c_it;
+              ++at_col;
+          }
+          ++r_it;
+          ++at_row;
+      }
+    }
+
+    template<typename T>
     Matrix<T>::Matrix(size_t n_total, const T *raw_data)
     {
       for(size_t i = 0; i < n_total; ++i){
@@ -103,6 +137,22 @@ namespace matrix { inline namespace v1 {
     {
       const size_t n_total = rhs.m_nrows * rhs.m_ncols;
       lvl1_zcopy(n_total, rhs.m_data.get(), 1, m_data.get(), 1);
+    }
+
+    template<typename T>
+    template<typename U,
+             std::enable_if_t<is_complex<U>::value, int> >
+    Matrix<T>::Matrix(const Matrix<double> &rhs)
+        : m_nrows(rhs.nrows()), m_ncols(rhs.ncols()),
+        m_data(std::make_unique<T[]>(rhs.nelements()))
+    {
+      const size_t n_total = rhs.nelements();
+      size_t pos = 0;
+      const double *rptr = rhs.data();
+      for(size_t i = 0; i < n_total; ++i){
+        m_data[pos++] = cxdbl(*rptr,0);
+        ++rptr;
+      }
     }
 
     template<typename T>
@@ -417,7 +467,6 @@ namespace matrix { inline namespace v1 {
       return lhs;
     }
 
-
     template<typename T>
     Matrix<T>& Matrix<T>::operator/=(const T &rhs)
     {
@@ -543,19 +592,18 @@ namespace matrix { inline namespace v1 {
               m_data[i] = dist(gen);
           }
           return *this;
+      } else if constexpr(is_complex<T>::value){
+          std::uniform_real_distribution<> dist(0.0, 1.0);
+
+          for(size_t i = 0; i < m_nrows * m_ncols; ++i){
+            m_data[i] = cxdbl(dist(gen), dist(gen));
+          }
+          return *this;
       } else if constexpr(std::is_floating_point<T>::value){
           std::uniform_real_distribution<> dist(0.0, 1.0);
 
           for(size_t i = 0; i < m_nrows * m_ncols; ++i){
               m_data[i] = dist(gen);
-          }
-          return *this;
-      } else if constexpr(is_complex<T>::value){
-          std::uniform_real_distribution<> dist(0.0, 1.0);
-
-          for(size_t i = 0; i < m_nrows * m_ncols; ++i){
-              m_data[i].real() = dist(gen);
-              m_data[i].imag() = dist(gen);
           }
           return *this;
       } else{
@@ -769,6 +817,25 @@ namespace matrix { inline namespace v1 {
           }
           else{
             res(i,i) = *iter;
+          }
+        }
+      }
+      return res;
+    }
+
+    template<typename T,
+             std::enable_if_t<is_complex<T>::value, int>>
+    Matrix<T> diagonal(std::initializer_list<double> vals)
+    {
+      Matrix<T> res(vals.size(), vals.size());
+      auto iter = vals.begin();
+      for(size_t i = 0; i < vals.size(); ++i, ++iter){
+        for(size_t j = 0; j < vals.size(); ++j){
+          if(i != j){
+            res(j, i) = 0;
+          }
+          else{
+            res(i,i) = cxdbl(*iter,0);
           }
         }
       }

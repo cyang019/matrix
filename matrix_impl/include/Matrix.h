@@ -4,7 +4,7 @@
 #include <memory>   // unique_ptr
 #include <utility>
 #include <exception>
-#include <type_traits>
+#include <type_traits>    // enable_if_t
 #include <initializer_list>
 #include <complex>
 #include <random>
@@ -112,7 +112,7 @@ namespace matrix {
 
         // the maximum absolute column sum of a matrix
         template<typename T>
-        T norm1(const Matrix<T> &);
+        double norm1(const Matrix<T> &);
 
         // @brief: column major matrix type.
         template<typename T>
@@ -135,11 +135,21 @@ namespace matrix {
           Matrix();
           Matrix(size_t, size_t);
           Matrix(size_t);     ///< square matrix
+
           Matrix(std::initializer_list<std::initializer_list<T>> il);
+
+          template<typename U=T,
+                   std::enable_if_t<is_complex<U>::value, int> = 0>
+          Matrix(std::initializer_list<std::initializer_list<double>> il);
+
           Matrix(size_t n_total, const T *raw_data);
 
           // copy ctor
           Matrix(const Matrix<T> &);
+
+          template<typename U = T,
+                   std::enable_if_t<is_complex<U>::value, int> = 0>
+          Matrix(const Matrix<double> &);
 
           // move ctor
           Matrix(Matrix<T> &&) noexcept;
@@ -201,6 +211,10 @@ namespace matrix {
 
         template<typename T>
         Matrix<T> diagonal(std::initializer_list<T> vals);
+
+        template<typename T,
+                 std::enable_if_t<is_complex<T>::value, int> = 0>
+        Matrix<T> diagonal(std::initializer_list<double> vals);
 
         template<typename T>
         Matrix<T> identity(size_t n);

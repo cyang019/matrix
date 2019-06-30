@@ -258,11 +258,11 @@ namespace matrix { inline namespace v1 {
         }
 
         template<typename T>
-        T norm1(const Matrix<T> &mat)
+        double norm1(const Matrix<T> &mat)
         {
-          T val = 0;
+          double val = 0;
           for(size_t c = 0; c < mat.ncols(); ++c){
-            T col_sum = 0;
+            double col_sum = 0;
             for(size_t r = 0; r < mat.nrows(); ++r){
               col_sum += std::abs(mat(r, c));
             }
@@ -285,7 +285,6 @@ namespace matrix { inline namespace v1 {
           }
           return res;
         }
-
 
         // solves for A * X = B
         template<typename T>

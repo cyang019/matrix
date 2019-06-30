@@ -21,22 +21,12 @@ namespace {
       ASSERT_EQ(false, matrix::exponential::areParallel(mat, 0, mat, 1));
     }
 
-    TEST(TestMatrix, Normest){
+    TEST(TestMatrix, DoubleExp){
       MatrixD m1= matrix::diagonal({1.0,2.0,3.0,4.0});
-      double val = matrix::exponential::normest(m1, 1);
-      ASSERT_TRUE(val < 4.0);
-      val = matrix::norm1(m1);
-      EXPECT_DOUBLE_EQ(4.0, val);
-      val = matrix::exponential::normest(m1, 2);
-      ASSERT_TRUE(val < 16.0);
+      MatrixD res1 = matrix::exp(m1);
+      MatrixD desired = matrix::diagonal(
+          { std::exp(1.0), std::exp(2.0), std::exp(3.0), std::exp(4.0)});
+      ASSERT_TRUE(matrix::allclose(desired, m1, 1.0e-14));
     }
-
-    // TEST(TestMatrix, DoubleExp){
-    //   MatrixD m1= matrix::diagonal({1.0,2.0,3.0,4.0});
-    //   MatrixD res1 = matrix::exp(m1);
-    //   MatrixD desired = matrix::diagonal(
-    //       { std::exp(1.0), std::exp(2.0), std::exp(3.0), std::exp(4.0)});
-    //   ASSERT_TRUE(matrix::allclose(desired, m1, 1.0e-14));
-    // }
 }
 

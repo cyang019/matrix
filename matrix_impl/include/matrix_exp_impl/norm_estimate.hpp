@@ -36,19 +36,23 @@ namespace matrix { inline namespace v1 {
       auto ptr_c2 = A2.data() + c2 * A2.nrows();
       double ratio = 0;
       for(size_t i = 0; i < A1.nrows(); ++i){
-        if (approxEqual(*ptr_c1, 0.0, 10*eps)) {
-          if(!approxEqual(0.0, *ptr_c2, 10*eps)) return false;
+        if (approxEqual<T>(*ptr_c1, 0.0, 10*eps)) {
+          if(!approxEqual<T>(0.0, *ptr_c2, 10*eps)) return false;
           else continue;
         }
-        else if (approxEqual(*ptr_c2, 0.0, 10*eps)){
-          if(!approxEqual(*ptr_c1, 0.0, 10*eps)) return false;
+        else if (approxEqual<T>(*ptr_c2, 0.0, 10*eps)){
+          if(!approxEqual<T>(*ptr_c1, 0.0, 10*eps)) return false;
           else continue;
         } else {
           if (std::abs(ratio) < 10*eps){
-            ratio = *ptr_c1 / *ptr_c2;
+            if constexpr(is_complex<T>::value){
+              ratio = (*ptr_c1 / *ptr_c2).real();
+            } else {
+              ratio = *ptr_c1 / *ptr_c2;
+            }
           } else {
             const T val = *ptr_c1 / *ptr_c2;
-            if (!approxEqual(ratio, val, 10*eps)) return false;
+            if (!approxEqual<T>(ratio, val, 10*eps)) return false;
           }
         }
 
@@ -112,11 +116,11 @@ namespace matrix { inline namespace v1 {
 
       double est_old = 0.0;
       double est = 0.0;
-      auto S = zeros<T>(A.nrows(), t);
-      auto S_old = S;
+      Matrix<T> S = zeros<T>(A.nrows(), t);
+      Matrix<T> S_old = S;
       std::unordered_set<size_t> ind_hist;
       for(size_t k = 1; k <= itmax; ++k){
-        auto Y = A * x;   ///< Y is of dim n x 2
+        Matrix<T> Y = A * x;   ///< Y is of dim n x 2
         for(size_t i = 1; i < m; ++i){
           Y = A * Y;
         }
@@ -153,7 +157,9 @@ namespace matrix { inline namespace v1 {
         }
         if(!not_all_parallel) return est;
 
-        if constexpr(t > 1){
+        // ==================================================
+        // this section not used due to performance issue
+        if constexpr(t > 99){
           bool has_parallel = true;
           while(has_parallel){
             for(size_t i = 0; i < S.ncols(); ++i){
@@ -182,6 +188,7 @@ namespace matrix { inline namespace v1 {
             }
           }
         }
+        // ==================================================
         
         auto Z = S.adjoint() * A;
         for(size_t i = 1; i < m; ++i){
