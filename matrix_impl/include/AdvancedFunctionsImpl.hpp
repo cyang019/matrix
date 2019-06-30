@@ -319,7 +319,8 @@ namespace matrix { inline namespace v1 {
           auto res = Matrix<T>(n, nrhs);
 
           for(size_t i = 0; i < n; ++i){
-            const size_t r = ptr_ipiv[i];
+            const size_t r = ptr_ipiv[i] - 1; ///< starting with 1
+            //std::cout << "i = " << i << "; r = " << r << "\n";
             for(size_t j = 0; j < nrhs; ++j){
               res(i, j) = B(r, j);
             }

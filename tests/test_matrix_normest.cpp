@@ -14,7 +14,9 @@ namespace {
         double norm = matrix::norm1(mat);
         double est = matrix::exponential::normest(mat, 1);
 
+#ifdef VERBOSE
         std::cout << mat << "\n";
+#endif
         std::cout << "1-norm: " << norm << "\n";
         std::cout << "1-norm estimation: " << est << "\n\n";
         ASSERT_TRUE(est <= norm);
@@ -72,7 +74,9 @@ namespace {
         double norm = matrix::norm1(mat);
         double est = matrix::exponential::normest(mat, 1);
 
+#ifdef VERBOSE
         std::cout << mat << "\n";
+#endif
         std::cout << "1-norm: " << norm << "\n";
         std::cout << "1-norm estimation: " << est << "\n\n";
         ASSERT_TRUE(est <= norm);

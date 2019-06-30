@@ -234,8 +234,8 @@ namespace matrix { inline namespace v1 {
     template<typename T>
     int ell(const Matrix<T> &A, size_t m)
     {
+      const double alpha = std::abs(c(2*m+1)) * normest(abs(A), 2*m+1)/norm1(A);
       const double m_d = static_cast<double>(m);
-      const double alpha = std::abs(c(2*m+1)) * normest(abs(A), 2*m_d+1)/norm1(A);
       const double val = std::log2(alpha/eps) * 0.5 / m_d;
       int res = (int)std::max(std::ceil(val), 0.0);
       return res;

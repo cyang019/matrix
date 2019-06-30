@@ -3,13 +3,15 @@ namespace matrix { inline namespace v1 {
     constexpr double c(int i)
     {
       switch(i){
-        case 7: return 9.92063492063492e-06;
-        case 11: return 9.94131285136576e-11;
-        case 15: return 2.22819456055356e-16;
-        case 19: return 1.69079293431187e-22;
-        case 23: return 5.48340615485360e-29;
-        case 27: return 8.82996160201868e-36;
-        default: return 0.0;
+        case 7: return 9.92063492063492e-06;    // m = 3
+        case 11: return 9.94131285136576e-11;   // m = 5
+        case 15: return 2.22819456055356e-16;   // m = 7
+        case 19: return 1.69079293431187e-22;   // m = 9
+        case 23: return 5.48340615485360e-29;   // m = 11
+        case 27: return 8.82996160201868e-36;   // m = 13
+        default:
+          throw NotImplementedError("c value not implemented.");
+          return 0.0;
       }
     }
 

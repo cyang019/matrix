@@ -26,7 +26,14 @@ namespace {
       MatrixD res1 = matrix::exp(m1);
       MatrixD desired = matrix::diagonal(
           { std::exp(1.0), std::exp(2.0), std::exp(3.0), std::exp(4.0)});
-      ASSERT_TRUE(matrix::allclose(desired, m1, 1.0e-14));
+      std::cout << std::setprecision(15);
+      std::cout << "desired:\n" << desired << "\n";
+      std::cout << "result:\n" << res1 << "\n";
+
+      double eps = matrix::norm1(desired) * matrix::eps * 5;
+      std::cout << "desired matrix norm1: " << matrix::norm1(desired) << "\n";
+
+      ASSERT_TRUE(matrix::allclose(desired, res1, eps));
     }
 }
 

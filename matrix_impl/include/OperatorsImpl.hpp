@@ -148,9 +148,15 @@ namespace matrix {
     Matrix<T> operator*(const Matrix<T> &lhs, const T &rhs)
     {
       auto res = lhs;
-      for(size_t i = 0; i < res.nelements(); ++i){
-        res *= rhs;
-      }
+      res *= rhs;
+      return res;
+    }
+
+    template<typename T>
+    Matrix<T> operator*(Matrix<T> &&lhs, const T &rhs)
+    {
+      auto res = std::move(lhs);
+      res *= rhs;
       return res;
     }
 
@@ -158,9 +164,15 @@ namespace matrix {
     Matrix<T> operator*(const T &lhs, const Matrix<T> &rhs)
     {
       auto res = rhs;
-      for(size_t i = 0; i < res.nelements(); ++i){
-        res *= lhs;
-      }
+      res *= lhs;
+      return res;
+    }
+
+    template<typename T>
+    Matrix<T> operator*(const T &lhs, Matrix<T> &&rhs)
+    {
+      auto res = std::move(rhs);
+      res *= lhs;
       return res;
     }
 
