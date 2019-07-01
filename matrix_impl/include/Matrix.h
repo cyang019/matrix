@@ -87,10 +87,10 @@ namespace matrix {
         template<typename T>
         Matrix<T> linearSolveSq(Matrix<T> &, Matrix<T> &);
 
-        template<EigenMethod em>
+        template<EigenMethod em=EigenMethod::zheevd>
         std::tuple<Matrix<double>, Matrix<cxdbl>> eigenSys(const Matrix<cxdbl> &);
 
-        template<EigenMethod em>
+        template<EigenMethod em=EigenMethod::zheevd>
         Matrix<double> eigenVal(const Matrix<cxdbl> &);
 
         template<typename T>

@@ -1,5 +1,5 @@
 namespace matrix { inline namespace v1 {
-        template<EigenMethod em=EigenMethod::zheevd>
+        template<EigenMethod em>
         std::tuple<Matrix<double>, Matrix<cxdbl>> eigenSys(const Matrix<cxdbl> &mat)
         {
 #ifndef NDEBUG
@@ -87,7 +87,7 @@ namespace matrix { inline namespace v1 {
           return std::make_tuple(std::move(eigen_vals), std::move(a));
         }
 
-        template<EigenMethod em=EigenMethod::zheevd>
+        template<EigenMethod em>
         Matrix<double> eigenVal(const Matrix<cxdbl> &mat)
         {
           const size_t n = mat.nrows();
