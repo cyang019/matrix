@@ -7,3 +7,6 @@ build/**
 .vscode/**
 
 **/.DS_Store
+
+# ignore ctag file
+tags
