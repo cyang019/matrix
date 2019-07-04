@@ -56,7 +56,7 @@ target_include_directories(matrix
   PRIVATE
   "${BLAS_INCLUDE_DIR}"
   PUBLIC
-  "${PROJECT_SOURCE_DIR}/matrix_impl/include"
+  "${CMAKE_CURRENT_LIST_DIR}/include"
 )
 
 include("include/CMakeLists.txt")
