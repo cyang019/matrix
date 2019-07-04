@@ -114,9 +114,16 @@ namespace matrix {
     template<typename T>
     Matrix<T> operator-(const T &t_val1, const Matrix<T> &t_m2)
     {
-      Matrix<T> m = t_m2;
-      m -= t_val1;
+      Matrix<T> m = t_val1 * identity<T>(t_m2.nrows(), t_m2.ncols());
+      m -= t_m2;
       return m;
+    }
+
+    template<typename T>
+    Matrix<T> operator-(const Matrix<T> &mat)
+    {
+      auto res = -1.0 * mat;
+      return res;
     }
 
     template<typename T>

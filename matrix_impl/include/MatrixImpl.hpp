@@ -843,20 +843,24 @@ namespace matrix { inline namespace v1 {
     }
 
     template<typename T>
-    Matrix<T> identity(size_t n)
+    Matrix<T> identity(size_t n1, size_t n2)
     {
-      auto res = Matrix<T>(n, n);
-      for(size_t i = 0; i < n; ++i){
-        for(size_t j = 0; j < n; ++j){
+      auto res = Matrix<T>(n1, n2);
+      for(size_t i = 0; i < n2; ++i){
+        for(size_t j = 0; j < n1; ++j){
           if(i != j){
             res(j, i) = 0;
           } else {
-            res(i, j) = 1;
+            res(j, i) = 1;
           }
         }
       }
       return res;
     }
+
+    template<typename T>
+    Matrix<T> identity(size_t n)
+    { return identity<T>(n, n); }
 
     template<typename T>
     Matrix<T> zeros(size_t nrows, size_t ncols)

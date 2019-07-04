@@ -61,6 +61,9 @@ namespace matrix {
         Matrix<T> operator-(const T&, const Matrix<T> &);
 
         template<typename T>
+        Matrix<T> operator-(const Matrix<T> &);
+
+        template<typename T>
         Matrix<T> operator*(const Matrix<T> &, const Matrix<T> &);
 
         template<typename T>
@@ -215,6 +218,9 @@ namespace matrix {
         template<typename T,
                  std::enable_if_t<is_complex<T>::value, int> = 0>
         Matrix<T> diagonal(std::initializer_list<double> vals);
+
+        template<typename T>
+        Matrix<T> identity(size_t n1, size_t n2);
 
         template<typename T>
         Matrix<T> identity(size_t n);

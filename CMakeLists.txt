@@ -4,6 +4,7 @@ project (matrix CXX)
 message(STATUS "Project matrix...")
 
 if(NOT DEFINED CMAKE_CXX_STANDARD)
+  message(STATUS "CPP standard - ${CMAKE_CXX_STANDARD}")
   set(CMAKE_CXX_STANDARD 17)
 endif()
 
@@ -22,7 +23,7 @@ if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
-option(BUILD_MATRIX_TESTS "build unittests as well" ON)
+option(BUILD_TESTS "build unittests as well" ON)
 
 # Add sub-directories
 add_subdirectory(matrix_impl)
@@ -34,9 +35,8 @@ fetch_googletest(
   ${PROJECT_BINARY_DIR}/googletest
   )
 
-if(BUILD_MATRIX_TESTS)
+if(BUILD_TESTS)
   enable_testing()
-  
   add_subdirectory(tests)
 endif()
 
