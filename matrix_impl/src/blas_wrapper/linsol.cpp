@@ -1,6 +1,6 @@
 #include "clapack.h"
 #include "blas_wrapper/linsol.h"
-#include "errors.h"
+#include "matrix_core/errors.h"
 
 
 namespace matrix {

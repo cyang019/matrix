@@ -1,5 +1,5 @@
 #include "blas_wrapper/cblas_level3.h"
-#include "errors.h"
+#include "matrix_core/errors.h"
 #include <complex>
 
 using namespace std;

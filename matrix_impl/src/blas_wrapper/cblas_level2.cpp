@@ -1,6 +1,6 @@
 #include "cblas.h"
 #include "blas_wrapper/cblas_level2.h"
-#include "errors.h"
+#include "matrix_core/errors.h"
 
 
 namespace matrix {

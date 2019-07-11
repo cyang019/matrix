@@ -170,6 +170,8 @@ namespace matrix { inline namespace v1 {
         template<typename T>
         Matrix<T> kroneckerProduct(const Matrix<T> &m1, const Matrix<T> &m2)
         {
+          if(m1.nrows() == 0 || m1.ncols() == 0) return m2;
+          if(m2.nrows() == 0 || m2.ncols() == 0) return m1;
           size_t nrows = m1.nrows() * m2.nrows();
           size_t ncols = m1.ncols() * m2.ncols();
           Matrix<T> res(nrows, ncols);

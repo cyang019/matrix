@@ -1,13 +1,13 @@
 target_sources(matrix
   PRIVATE
-  "${CMAKE_CURRENT_LIST_DIR}/errors.h"
-  "${CMAKE_CURRENT_LIST_DIR}/common.h"
+  "${CMAKE_CURRENT_LIST_DIR}/matrix_core/errors.h"
+  "${CMAKE_CURRENT_LIST_DIR}/matrix_core/common.h"
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/cblas_common.h"
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/cblas_level1.h"
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/cblas_level2.h"
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/cblas_level3.h"
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/cblas_functions.h"
-  "${CMAKE_CURRENT_LIST_DIR}/Matrix.h"
+  "${CMAKE_CURRENT_LIST_DIR}/matrix_core/Matrix.h"
   PUBLIC
-  "${CMAKE_CURRENT_LIST_DIR}/Matrix.h"
+  "${CMAKE_CURRENT_LIST_DIR}/matrix.h"
   )

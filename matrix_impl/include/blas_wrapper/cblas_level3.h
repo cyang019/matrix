@@ -2,7 +2,7 @@
 #define _MATRIX_BLAS_LEVEL3_H
 
 #include "blas_wrapper/cblas_common.h"
-#include "common.h"
+#include "matrix_core/common.h"
 
 
 namespace matrix {

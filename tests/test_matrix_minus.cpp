@@ -1,4 +1,4 @@
-#include "Matrix.h"
+#include "matrix.h"
 #include "gtest/gtest.h"
 #include <limits>
 
@@ -23,6 +23,7 @@ namespace {
       };
 
       ASSERT_TRUE(matrix::allclose(m_desired, m2-m1, 1.0e-14));
+      ASSERT_TRUE(matrix::allclose(m_desired, m2-1.0, 1.0e-14));
     }
 }
 

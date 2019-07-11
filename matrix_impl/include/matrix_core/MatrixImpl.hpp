@@ -467,6 +467,21 @@ namespace matrix { inline namespace v1 {
       return lhs;
     }
 
+    inline
+    Matrix<cxdbl> operator*(const Matrix<cxdbl> &lhs, const double &rhs)
+    {
+      auto res = lhs;
+      lvl1_zdscal(res.ncols() * res.nrows(), rhs, res.data(), 1);
+      return res;
+    }
+
+    inline
+    Matrix<cxdbl> operator*(const double &lhs, const Matrix<cxdbl> &rhs)
+    {
+      auto res = rhs * lhs;
+      return res;
+    }
+
     template<typename T>
     Matrix<T>& Matrix<T>::operator/=(const T &rhs)
     {
