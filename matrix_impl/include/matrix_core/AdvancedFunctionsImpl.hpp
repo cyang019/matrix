@@ -191,6 +191,20 @@ namespace matrix { inline namespace v1 {
         }
 
         template<typename T>
+        Matrix<T> kroneckerProduct(const std::vector<Matrix<T>> &ms)
+        {
+          if(ms.size() == 0) return Matrix<T>();
+
+          if(ms.size() == 1) return ms[0];
+
+          auto res = ms[0];
+          for(size_t i = 1; i < ms.size(); ++i){
+            res = kroneckerProduct(res, ms[i]);
+          }
+          return res;
+        }
+
+        template<typename T>
         T trace(const Matrix<T> &m)
         {
           const size_t min_size = std::min(m.nrows(), m.ncols());

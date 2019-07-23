@@ -99,6 +99,9 @@ namespace matrix {
         template<typename T>
         Matrix<T> kroneckerProduct(const Matrix<T> &, const Matrix<T> &);
 
+        template<typename T>
+        Matrix<T> kroneckerProduct(const std::vector<Matrix<T>> &);
+
         /// trace of A^T. B or A^H . B
         /// based on xdot & xdotc
         template<typename T>
