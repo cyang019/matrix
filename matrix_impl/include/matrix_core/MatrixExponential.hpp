@@ -147,10 +147,13 @@ namespace matrix { inline namespace v1 {
         }
         ++n;
       }
+#ifdef VERBOSE
+      std::cout << "expMinusIdentity(), n = " << n << std::endl;
+#endif
 
       Matrix<T> res = zeros<T>(mat.nrows(), mat.ncols());
       for(std::size_t i = 1; i < n; ++i){
-        res += 1.0/factorial(i) * pow<T>(mat,i);
+        res = res + 1.0/factorial(i) * pow<T>(mat,i);
       }
       return res;
     }
@@ -163,7 +166,7 @@ namespace matrix { inline namespace v1 {
   }
 
   template<typename T>
-  Matrix<T> expMinusI(const Matrix<T> &mat)
+  Matrix<T> expMinusIdentity(const Matrix<T> &mat)
   {
     return exponential::expMinusIdentity(mat);
   }

@@ -7,6 +7,7 @@
 
 namespace {
     using MatrixD = matrix::Matrix<double>; 
+    using MatrixCD = matrix::Matrix<std::complex<double>>; 
     using MatrixI = matrix::Matrix<int>; 
 
     TEST(TestMatrix, areParallel){
@@ -34,6 +35,16 @@ namespace {
       std::cout << "desired matrix norm1: " << matrix::norm1(desired) << "\n";
 
       ASSERT_TRUE(matrix::allclose(desired, res1, eps));
+    }
+
+    TEST(TestMatrix, ExpMinusOne){
+      MatrixCD m = {{-0.5, 0}, {0, 0.5}};
+      MatrixCD desired = {{std::exp(-0.5) - 1.0, 0.0}, {0.0, std::exp(0.5) - 1.0}};
+      MatrixCD res = matrix::expMinusIdentity(m);
+
+      double eps = matrix::norm1(desired) * matrix::eps * 5;
+      std::cout << "desired matrix norm1: " << matrix::norm1(desired) << "\n";
+      ASSERT_TRUE(matrix::allclose(desired, res, eps));
     }
 }
 
