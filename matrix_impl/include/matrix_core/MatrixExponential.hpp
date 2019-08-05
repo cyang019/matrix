@@ -122,12 +122,50 @@ namespace matrix { inline namespace v1 {
 #endif
       return res;
     }
-  }
+
+
+    /// use when ||mat||_1 < 1, Maclaurin series until around eps 
+    template<typename T>
+    Matrix<T> expMinusIdentity(const Matrix<T> &mat)
+    {
+      static_assert(is_complex<T>::value || is_double<T>::value,
+          "Need numeric type.");
+
+      double mat_norm1 = norm1(mat);
+#ifndef NDEBUG
+      if(mat_norm1 > 1.0 - eps){
+        throw OutOfRangeError("matrix 1-norm too large for expMinusIdentity estimation.");
+      }
+#endif
+      constexpr std::size_t max_n = 18;
+      std::size_t n = 1;
+
+      while(n < max_n){
+        auto mat_norm1_approx = normest(mat, n);
+        if(mat_norm1_approx/factorial(n) <= eps){
+          break;
+        }
+        ++n;
+      }
+
+      Matrix<T> res = zeros<T>(mat.nrows(), mat.ncols());
+      for(std::size_t i = 1; i < n; ++i){
+        res += 1.0/factorial(i) * pow<T>(mat,i);
+      }
+      return res;
+    }
+  } // namespace exponential
   // squaring and scaling & Pade Approximation
   template<typename T>
   Matrix<T> exp(const Matrix<T> &mat)
   {
     return exponential::exp(mat);
+  }
+
+  template<typename T>
+  Matrix<T> expMinusI(const Matrix<T> &mat)
+  {
+    return exponential::expMinusIdentity(mat);
   }
 
 }  // namespace v1
