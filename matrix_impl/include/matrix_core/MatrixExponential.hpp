@@ -137,7 +137,7 @@ namespace matrix { inline namespace v1 {
         throw OutOfRangeError("matrix 1-norm too large for expMinusIdentity estimation.");
       }
 #endif
-      constexpr std::size_t max_n = 18;
+      constexpr std::size_t max_n = 18;   ///< factorial(18) ~ 6e15
       std::size_t n = 1;
 
       while(n < max_n){
