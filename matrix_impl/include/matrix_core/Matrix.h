@@ -75,6 +75,10 @@ namespace matrix {
         template<typename T>
         Matrix<T> operator/(const Matrix<T> &, const T &);
 
+        /// @param mat: matrix
+        /// @param c: 'C' or 'R', column or row
+        template<typename T>
+        Matrix<T> flatten(const Matrix<T> &mat, char c);
         // -------------------------
         /// advanced operations
         // -------------------------
@@ -137,6 +141,7 @@ namespace matrix {
           friend Matrix<T> operator*<T>(const T &t_v1, const Matrix<T> &t_m2);
           friend Matrix<T> operator*<T>(const Matrix<T> &t_m1, const T &t_v2);
           friend Matrix<T> operator/<T>(const Matrix<T> &t_m1, const T &t_v2);
+          friend Matrix<T> flatten<T>(const Matrix<T> &mat, char c);
 
           Matrix();
           Matrix(size_t, size_t);
