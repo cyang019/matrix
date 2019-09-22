@@ -131,8 +131,8 @@ namespace matrix { inline namespace v1 {
       static_assert(is_complex<T>::value || is_double<T>::value,
           "Need numeric type.");
 
-      double mat_norm1 = norm1(mat);
 #ifndef NDEBUG
+      double mat_norm1 = norm1(mat);
       if(mat_norm1 > 1.0 - eps){
         throw OutOfRangeError("matrix 1-norm too large for expMinusIdentity estimation.");
       }
