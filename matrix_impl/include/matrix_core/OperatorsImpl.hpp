@@ -254,20 +254,20 @@ namespace matrix {
       if(c == 'C' || c == 'c'){
         Matrix<T> res(mat.m_nrows * mat.m_ncols, 1);
         
-        for(size_t i = 0; i < mat.m_ncols; ++i){
-          for(size_t j = 0; j < mat.m_nrows; ++j){
-            const auto idx = i * mat.m_nrows + j;
-            res.m_data[idx] = mat(j, i);
+        size_t idx = 0;
+        for(size_t i = 0; i < mat.m_nrows; ++i){
+          for(size_t j = 0; j < mat.m_ncols; ++j){
+            res.m_data[idx++] = mat(i, j);
           }
         }
         return res;
       } else {
         Matrix<T> res(1, mat.m_nrows * mat.m_ncols);
         
-        for(size_t i = 0; i < mat.m_ncols; ++i){
-          for(size_t j = 0; j < mat.m_nrows; ++j){
-            const auto idx = i * mat.m_nrows + j;
-            res.m_data[idx] = mat(j, i);
+        size_t idx = 0;
+        for(size_t i = 0; i < mat.m_nrows; ++i){
+          for(size_t j = 0; j < mat.m_ncols; ++j){
+            res.m_data[idx++] = mat(i, j);
           }
         }
         return res;

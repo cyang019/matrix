@@ -248,7 +248,10 @@ namespace matrix { inline namespace v1 {
         {
           auto val = projection<T>(lhs, rhs);
           auto norm = projection<T>(rhs, rhs);
-          return val/norm;
+          if(std::abs(norm) > eps){
+            val /= norm;
+          }
+          return val;
         }   // projectionNorm
 
         
