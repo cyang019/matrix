@@ -243,6 +243,7 @@ namespace matrix { inline namespace v1 {
           }
         }   // projection()
 
+        /// @ project lhs onto rhs. rhs will be scaled to norm.
         template<typename T>
         T projectionNorm(const Matrix<T> &lhs, const Matrix<T> &rhs)
         {
