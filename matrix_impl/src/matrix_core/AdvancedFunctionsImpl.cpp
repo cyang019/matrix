@@ -5,6 +5,8 @@
 #include <utility>
 #include <cmath>
 #include <iostream>
+#include <chrono>
+#include <ctime>
 
 using namespace std;
 
@@ -43,9 +45,16 @@ namespace matrix {
       int info = 0;
 
       // query sizes
+#ifndef NDEBUG
+      auto t1 = std::clock();
+#endif
       int res = mat_zgelsd(m, n,nrhs, 
           a_local.data(), lda, b_mat.get(), ldb, s.get(), &rcond,
           &rank, work.get(), -1, rwork.get(), iwork.get(), &info);
+#ifndef NDEBUG
+      auto t2 = std::clock();
+      cout << "Query cpu time: " << 1000.0 * (t2 - t1)/CLOCKS_PER_SEC << endl;
+#endif
 
       lwork = static_cast<int>(work[0].real());
       int lrwork = static_cast<int>(rwork[0]);
@@ -60,9 +69,16 @@ namespace matrix {
       rwork = make_unique<double[]>(lrwork);
       iwork = make_unique<int[]>(liwork);
 
+#ifndef NDEBUG
+      auto t3 = std::clock();
+#endif
       res = mat_zgelsd(m, n, nrhs, 
           a_local.data(), lda, b_mat.get(), ldb, s.get(), &rcond,
           &rank, work.get(), lwork, rwork.get(), iwork.get(), &info);
+#ifndef NDEBUG
+      auto t4 = std::clock();
+      cout << "compute cpu time: " << 1000.0 * (t4 - t3)/CLOCKS_PER_SEC << endl;
+#endif
       Matrix<cxdbl> x(n, nrhs);
       for(size_t i = 0; i < nrhs; ++i){
         for(size_t j = 0; j < n; ++j){
