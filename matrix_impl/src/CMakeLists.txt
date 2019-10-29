@@ -5,4 +5,5 @@ target_sources(matrix
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/cblas_level3.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/eigen.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/blas_wrapper/linsol.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/matrix_core/AdvancedFunctionsImpl.cpp"
   )

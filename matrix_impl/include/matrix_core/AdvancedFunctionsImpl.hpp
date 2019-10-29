@@ -306,6 +306,9 @@ namespace matrix { inline namespace v1 {
           return res;
         }
 
+        // solve for A*x = B by minimizing 2-norm(abs(b - A*x))
+        std::pair<Matrix<cxdbl>, int> lstsq(const Matrix<cxdbl> &a, const Matrix<cxdbl> &b, double rcond=-1);
+
         // solves for A * X = B
         template<typename T>
         Matrix<T> linearSolveSq(Matrix<T> &A, Matrix<T> &B)

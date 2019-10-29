@@ -49,7 +49,7 @@ namespace matrix {
         size_t m, size_t n, size_t nrhs,
         cxdbl *a, size_t lda, cxdbl *b, size_t ldb,
         double *s, double *rcond,
-        int rank, cxdbl *work,
+        int *rank, cxdbl *work,
         int lwork, double *rwork,
         int *iwork, int *info)
     {
@@ -67,14 +67,13 @@ namespace matrix {
       int ncols_b = (int)nrhs;
       int lower_dim_a = (lda > 0) ? (int)lda : 1;
       int lower_dim_b = (ldb > 0) ? (int)ldb : 1;
-      int lwork_int = (lwork > 0) ? (int)lwork : 1;
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
       auto clpk_b = reinterpret_cast<__CLPK_doublecomplex *>(b);
       auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work);
 
       int res = zgelsd_(&nrows, &ncols, &ncols_b,
           clpk_a, &lower_dim_a, clpk_b, &lower_dim_b,
-          s, rcond, &rank, clpk_work, &lwork_int,
+          s, rcond, rank, clpk_work, &lwork,
           rwork, iwork, info);
       return res;
     }
