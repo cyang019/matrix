@@ -1,6 +1,12 @@
+#include "configure_matrix.h"
+#ifdef HAVE_CLAPACK
+  #include "clapack.h"
+#elif defined HAVE_LAPACKE
+  #include "lapacke.h"
+#else
+#endif
 #include "matrix_core/Matrix.h"
 #include "blas_wrapper/linsol.h"
-#include "clapack.h"
 #include <memory>
 #include <utility>
 #include <cmath>

@@ -1,3 +1,4 @@
+#include "configure_matrix.h"
 #include "cblas.h"
 #include "blas_wrapper/cblas_level1.h"
 

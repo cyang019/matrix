@@ -1,14 +1,19 @@
+#include "configure_matrix.h"
 #include "blas_wrapper/cblas_level3.h"
 #include "matrix_core/errors.h"
 #include <complex>
 
-using namespace std;
-
-#ifdef __APPLE__
 #include "cblas.h"
-#include "clapack.h"
+
+#ifdef HAVE_CLAPACK
+  #include "clapack.h"
+#elif defined HAVE_LAPACKE
+  #include "lapacke.h"
 #else
 #endif
+
+
+using namespace std;
 
 
 namespace matrix {

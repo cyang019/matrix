@@ -1,0 +1,9 @@
+#ifndef MATRIX_CONFIGURE_H
+#define MATRIX_CONFIGURE_H
+
+#cmakedefine HAVE_CLAPACK
+#cmakedefine HAVE_LAPACKE
+
+
+#endif
+

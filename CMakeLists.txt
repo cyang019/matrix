@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.14)
-project (matrix CXX)
+project (matrix 
+  LANGUAGES CXX
+  VERSION 0.1)
 
 message(STATUS "Project matrix...")
 
@@ -29,7 +31,9 @@ option(BUILD_TESTS "build unittests as well" ON)
 add_subdirectory(matrix_impl)
 
 include(cmake/googletest.cmake)
-include(cmake/CodeCoverage.cmake)
+if(NDEBUG)
+  include(cmake/CodeCoverage.cmake)
+endif()
 fetch_googletest(
   ${PROJECT_SOURCE_DIR}/cmake
   ${PROJECT_BINARY_DIR}/googletest
@@ -39,4 +43,5 @@ if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
+
 

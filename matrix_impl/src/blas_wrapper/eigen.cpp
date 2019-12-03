@@ -1,4 +1,10 @@
-#include "clapack.h"
+#include "configure_matrix.h"
+#ifdef HAVE_CLAPACK
+  #include "clapack.h"
+#elif defined HAVE_LAPACKE
+  #include "lapacke.h"
+#else
+#endif
 #include "blas_wrapper/eigen.h"
 #include "matrix_core/errors.h"
 
