@@ -14,19 +14,57 @@ endif()
 
 target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
 
+set(_possible_paths ${CMAKE_PREFIX_PATH}/include /usr/include /usr/local/include)
+
 if (APPLE)
   message( STATUS "OSX detected. Link cblas..." )
   #target_link_libraries(matrix INTERFACE "-framework Foundation")
+  find_package(BLAS)
+  if(BLAS_FOUND)
+    message( STATUS "BLAS found: ${BLAS_LIBRARIES}" )
+    message( STATUS BLAS_HOME: ${BLAS_HOME} )
+    message( STATUS BLAS_DIR: ${BLAS_DIR} )
+    message( STATUS BLAS_LIBDIR: ${BLAS_LIBDIR} )
+    list(GET BLAS_LIBRARIES 0 BLAS_LIBRARY_DIR)
+    find_path(BLAS_INCLUDE_DIRS 
+      NAMES 
+        cblas.h
+      HINTS
+        /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
+        ${_possible_paths}
+        $ENV{BLAS_HOME}/include)
+    list(GET BLAS_INCLUDE_DIRS 0 BLAS_INCLUDE_DIR)
+    INCLUDE_DIRECTORIES(${BLAS_INCLUDE_DIR})
+    message( STATUS "cblas.h => ${BLAS_INCLUDE_DIR}" )
+  else()
+    message( FATAL_ERROR "Missing BLAS.")
+  endif()
 
-  set(BLAS_INCLUDE_DIR
-    "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers"
-  )
-  option(HAVE_CLAPACK "CLAPACK" ON)
+  # ===== Look For Lapack =====
+  find_package(LAPACK)
+  if(LAPACK_FOUND)
+    message( STATUS "LAPACK found: ${LAPACK_LIBRARIES}" )
+    message( STATUS LAPACK_HOME: ${LAPACK_HOME} )
+    message( STATUS LAPACK_DIR: ${LAPACK_DIR} )
+    message( STATUS LAPACK_LIBDIR: ${LAPACK_LIBDIR} )
+    find_path(CLAPACK_INCLUDE_DIRS 
+      NAMES 
+        clapack.h
+      PATHS
+        /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
+        ${_possible_paths}
+        $ENV{LAPACK_HOME}/include)
+  else()
+    message( FATAL_ERROR "LAPACK c interface headers missing.")
+  endif()
+  #set(BLAS_INCLUDE_DIR
+  #  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers"
+  #)
+  option(HAVE_APPLE_LAPACK "APPLE_LAPACK" ON)
 
   #add_compile_definitions(WITH_VECLIB_CBLAS)
   #unset(matrix_LIB_DEPENDS CACHE)
 elseif(UNIX)
-  set(_possible_paths ${CMAKE_PREFIX_PATH}/include /usr/include /usr/local/include)
   # ===== Look For BLAS =====
   find_package(BLAS)
   if(BLAS_FOUND)
