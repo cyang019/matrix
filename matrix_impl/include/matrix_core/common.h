@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <complex>
 #include <limits>
+#include <cstdint>
 
 namespace matrix {
   inline namespace v1 {
@@ -12,8 +13,18 @@ namespace matrix {
     constexpr double eps = std::numeric_limits<double>::epsilon();
     constexpr int int_max = std::numeric_limits<int>::max();
     constexpr cxdbl cx_zero = 0;
+    inline std::int64_t log2int(std::int64_t value) 
+    { std::int64_t target = 0; 
+      while(value > 0) {
+        ++target;
+        value >>= 1;
+      }
+      return target;
+    }
 
     template <typename T> using static_not = std::integral_constant<bool, !T::value>;
+
+  
 
     template <typename T> struct is_default : std::true_type {};
 

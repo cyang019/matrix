@@ -264,17 +264,22 @@ namespace matrix { inline namespace v1 {
             throw MatrixIsNotSquare("Matrix need to be square for pow().");
           }
 #endif
-          if (n == 0){
-            return identity<T>(mat.nrows());
-          } else if (n % 2 == 0) {
-            auto res = pow<T>(mat, n/2) * pow<T>(mat, n/2);
-            return res;
-          } else if (n == 1){
-            return mat;
-          } else {
-            auto res = mat * pow<T>(mat, n-1);
-            return res;
+          std::int64_t ncalc = log2int(static_cast<std::int64_t>(n));
+          std::uint64_t calculated_n = 0;
+          auto res_total = identity<T>(mat.nrows());
+          while(calculated_n < n){
+            auto res = mat;
+            std::uint64_t n_this_round = 1;
+            for(std::int64_t i = 0; i < ncalc-1; ++i){
+              res = res * res;
+              n_this_round *= 2;
+            }
+            calculated_n += n_this_round;
+            res_total = res_total * res;
+            ncalc = log2int(n-calculated_n);
           }
+
+          return res_total;
         }
 
         template<typename T>
