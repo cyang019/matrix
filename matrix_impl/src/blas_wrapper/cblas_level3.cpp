@@ -27,7 +27,7 @@ namespace matrix {
         double beta, double *C, int ldc)
     {
 #ifndef NDEBUG
-      if (m >= int_max || n >= int_max || k >= int_max) {
+      if (m >= (size_t)int_max || n >= (size_t)int_max || k >= (size_t)int_max) {
         throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
       }
 #endif
@@ -45,7 +45,7 @@ namespace matrix {
         cxdbl beta, cxdbl *C, int ldc)
     {
 #ifndef NDEBUG
-      if (m >= int_max || n >= int_max || k >= int_max) {
+      if (m >= (size_t)int_max || n >= (size_t)int_max || k >= (size_t)int_max) {
         throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
       }
 #endif
@@ -57,19 +57,26 @@ namespace matrix {
     int mat_dgetrf(size_t m, size_t n, double *A, size_t lda, int *ipiv, int *info)
     {
 #ifndef NDEBUG
-      if (m >= int_max || n >= int_max || lda >= int_max) {
+      if (m >= (size_t)int_max || n >= (size_t)int_max || lda >= (size_t)int_max) {
         throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
       }
 #endif
+
+      int res = 0;
+#ifdef HAVE_APPLE_LAPACK
       int i_m = (int)m;
       int i_n = (int)n;
       int i_lda = (int)lda;
+<<<<<<< HEAD
 #ifdef HAVE_APPLE_LAPACK
       int res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_dgetrf(LAPACK_COL_MAJOR, i_m, i_n, A, i_lda, ipiv);
       int res = *info;
 #else
+=======
+      res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
+>>>>>>> bfea27faacc032e19f2a464d8791b07a71ad6670
 #endif
       return res;
     }
@@ -78,10 +85,12 @@ namespace matrix {
         double *work, size_t lwork, int *info)
     {
 #ifndef NDEBUG
-      if (n >= int_max || lda >= int_max || lwork >= int_max) {
+      if (n >= (size_t)int_max || lda >= (size_t)int_max || lwork >= (size_t)int_max) {
         throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
       }
 #endif
+      int res = 0;
+#ifdef HAVE_APPLE_LAPACK
       int i_n = (int)n;
       int i_lda = (int)lda;
 #ifdef HAVE_APPLE_LAPACK
@@ -89,11 +98,15 @@ namespace matrix {
       int res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
 #elif defined HAVE_CLAPACK
       int i_lwork = (int)lwork;
+<<<<<<< HEAD
       int res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_dgetri(LAPACK_COL_MAJOR, i_n, A, i_lda, ipiv);
       int res = *info;
 #else
+=======
+      res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
+>>>>>>> bfea27faacc032e19f2a464d8791b07a71ad6670
 #endif
       return res;
     }
