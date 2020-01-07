@@ -19,15 +19,10 @@ namespace matrix { inline namespace v1 {
           Matrix<double> eigen_vals(n, 1);
 
           if constexpr(em == EigenMethod::zheev){
-            const size_t lwork = n > 0 ? (n+1)*n : 1;
-            auto work = std::make_unique<cxdbl[]>(lwork);
-
-            const size_t rwork_size = n > 0 ? 3*n-2 : 1;
-            auto rwork = std::make_unique<double[]>(rwork_size);
 
             int info = 0;
             mat_zheev(jobz, uplo, n, a.data(), lda,
-                eigen_vals.data(), work.get(), lwork, rwork.get(), &info);
+                eigen_vals.data(), &info);
 
             if(info != 0){
               throw InvalidEigenValue("eigenSys calculation invalid.");

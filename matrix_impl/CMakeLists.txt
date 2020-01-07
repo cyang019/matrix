@@ -21,7 +21,7 @@ if (APPLE)
   set(BLAS_INCLUDE_DIR
     "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers"
   )
-  option(HAVE_CLAPACK "CLAPACK" ON)
+  option(HAVE_APPLE_CLAPACK "CLAPACK" ON)
 
   #add_compile_definitions(WITH_VECLIB_CBLAS)
   #unset(matrix_LIB_DEPENDS CACHE)

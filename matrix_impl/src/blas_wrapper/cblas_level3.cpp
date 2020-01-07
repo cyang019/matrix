@@ -5,7 +5,7 @@
 
 #include "cblas.h"
 
-#ifdef HAVE_CLAPACK
+#ifdef HAVE_APPLE_LAPACK
   #include "clapack.h"
 #elif defined HAVE_LAPACKE
   #include "lapacke.h"
@@ -64,7 +64,13 @@ namespace matrix {
       int i_m = (int)m;
       int i_n = (int)n;
       int i_lda = (int)lda;
+#ifdef HAVE_APPLE_LAPACK
       int res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
+#elif defined HAVE_LAPACKE
+      *info = LAPACKE_dgetrf(LAPACK_COL_MAJOR, i_m, i_n, A, i_lda, ipiv);
+      int res = *info;
+#else
+#endif
       return res;
     }
 
@@ -78,8 +84,17 @@ namespace matrix {
 #endif
       int i_n = (int)n;
       int i_lda = (int)lda;
+#ifdef HAVE_APPLE_LAPACK
       int i_lwork = (int)lwork;
       int res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
+#elif defined HAVE_CLAPACK
+      int i_lwork = (int)lwork;
+      int res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
+#elif defined HAVE_LAPACKE
+      *info = LAPACKE_dgetri(LAPACK_COL_MAJOR, i_n, A, i_lda, ipiv);
+      int res = *info;
+#else
+#endif
       return res;
     }
   } // namespace v1

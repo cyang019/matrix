@@ -1,5 +1,5 @@
 #include "configure_matrix.h"
-#ifdef HAVE_CLAPACK
+#ifdef HAVE_APPLE_LAPACK
   #include "clapack.h"
 #elif defined HAVE_LAPACKE
   #include "lapacke.h"
@@ -11,28 +11,41 @@
 
 namespace matrix {
   inline namespace v1 {
-    int mat_zheev(char jobz, char uplo, size_t n, cxdbl *a,
-        size_t lda, 
-        double *w, cxdbl *work, size_t lwork, 
-        double *rwork, int *info)
+    int mat_zheev(char jobz, char uplo, size_t n, 
+        cxdbl *a, size_t lda, 
+        double *w, int *info)
     {
 #ifndef NDEBUG
       if(n > (size_t)int_max || lda > (size_t)int_max){
         throw IndexOutOfBound("matrix dimension cannot exceed INT_MAX.");
       }
+#endif
+      int dim = (int)n;
+      int lower_dim = (int)lda;
 
+      int res = 0;
+#ifdef HAVE_APPLE_LAPACK
+      const size_t lwork = n > 0 ? (n+1) * n : 1;
+#ifndef NDEBUG
       if(lwork > (size_t)int_max){
         throw IndexOutOfBound("lwork cannot exceed INT_MAX.");
       }
 #endif
-      int dim = (int)n;
-      int lower_dim = (int)lda;
+      auto work = std::make_unique<cxdbl[]>(lwork);
+      const size_t rwork_size = n > 0 ? 3 * n - 2 : 1;
+      auto rwork = std::make_unique<double[]>(rwork_size);
+
       int work_length = (int)lwork;
       /// unique_ptr<cxdbl> a; a.get() directly
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
-      auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work);
-      int res = zheev_(&jobz, &uplo, &dim, clpk_a, &lower_dim, 
-          w, clpk_work, &work_length, rwork, info);
+      auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work.get());
+      res = zheev_(&jobz, &uplo, &dim, clpk_a, &lower_dim, 
+          w, clpk_work, &work_length, rwork.get(), info);
+#elif defined HAVE_LAPACKE
+      *info = LAPACKE_zheev(LAPACK_COL_MAJOR, jobz, uplo, dim,
+          a, lower_dim, w);
+      res = *info;
+#endif
       return res;
     }
 

@@ -1,8 +1,15 @@
 #ifndef MATRIX_CONFIGURE_H
 #define MATRIX_CONFIGURE_H
 
+#cmakedefine HAVE_APPLE_CLAPACK
 #cmakedefine HAVE_CLAPACK
 #cmakedefine HAVE_LAPACKE
+
+#ifdef HAVE_LAPACKE
+#include <complex>
+#define lapack_complex_float std::complex<float>
+#define lapack_complex_double std::complex<double>
+#endif
 
 
 #endif
