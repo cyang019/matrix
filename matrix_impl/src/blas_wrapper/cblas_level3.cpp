@@ -67,16 +67,10 @@ namespace matrix {
       int i_m = (int)m;
       int i_n = (int)n;
       int i_lda = (int)lda;
-<<<<<<< HEAD
-#ifdef HAVE_APPLE_LAPACK
-      int res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
+      res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_dgetrf(LAPACK_COL_MAJOR, i_m, i_n, A, i_lda, ipiv);
-      int res = *info;
-#else
-=======
-      res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
->>>>>>> bfea27faacc032e19f2a464d8791b07a71ad6670
+      res = *info;
 #endif
       return res;
     }
@@ -93,20 +87,11 @@ namespace matrix {
 #ifdef HAVE_APPLE_LAPACK
       int i_n = (int)n;
       int i_lda = (int)lda;
-#ifdef HAVE_APPLE_LAPACK
       int i_lwork = (int)lwork;
-      int res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
-#elif defined HAVE_CLAPACK
-      int i_lwork = (int)lwork;
-<<<<<<< HEAD
-      int res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
+      res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_dgetri(LAPACK_COL_MAJOR, i_n, A, i_lda, ipiv);
-      int res = *info;
-#else
-=======
-      res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
->>>>>>> bfea27faacc032e19f2a464d8791b07a71ad6670
+      res = *info;
 #endif
       return res;
     }
