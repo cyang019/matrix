@@ -63,10 +63,10 @@ namespace matrix {
 #endif
 
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
       int i_m = (int)m;
       int i_n = (int)n;
       int i_lda = (int)lda;
+#ifdef HAVE_APPLE_LAPACK
       res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_dgetrf(LAPACK_COL_MAJOR, i_m, i_n, A, i_lda, ipiv);
@@ -76,19 +76,26 @@ namespace matrix {
     }
 
     int mat_dgetri(size_t n, double *A, size_t lda, int * ipiv, 
-        double *work, size_t lwork, int *info)
+        int *info)
     {
 #ifndef NDEBUG
-      if (n >= (size_t)int_max || lda >= (size_t)int_max || lwork >= (size_t)int_max) {
+      if (n >= (size_t)int_max || lda >= (size_t)int_max) {
         throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
       }
 #endif
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
       int i_n = (int)n;
       int i_lda = (int)lda;
-      int i_lwork = (int)lwork;
-      res = dgetri_(&i_n, A, &i_lda, ipiv, work, &i_lwork, info);
+#ifdef HAVE_APPLE_LAPACK
+      // query lwork
+      int lwork = -1;
+      auto work = std::make_unique<double[]>(1);
+      res = dgetri_(&i_n, A, &i_lda, ipiv, work.get(), &lwork, info);
+      lwork = static_cast<int>(work[0]);
+      work = std::make_unique<double[]>(lwork);
+      // actual calculation
+      // inv(A)*L = inv(U)
+      res = dgetri_(&i_n, A, &i_lda, ipiv, work.get(), &lwork, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_dgetri(LAPACK_COL_MAJOR, i_n, A, i_lda, ipiv);
       res = *info;

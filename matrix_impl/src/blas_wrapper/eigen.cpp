@@ -27,15 +27,9 @@ namespace matrix {
       int res = 0;
 #ifdef HAVE_APPLE_LAPACK
       const size_t lwork = n > 0 ? (n+1) * n : 1;
-#ifndef NDEBUG
-      if(lwork > (size_t)int_max){
-        throw IndexOutOfBound("lwork cannot exceed INT_MAX.");
-      }
-#endif
       auto work = std::make_unique<cxdbl[]>(lwork);
       const size_t rwork_size = n > 0 ? 3 * n - 2 : 1;
       auto rwork = std::make_unique<double[]>(rwork_size);
-
       int work_length = (int)lwork;
       /// unique_ptr<cxdbl> a; a.get() directly
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
@@ -51,32 +45,44 @@ namespace matrix {
     }
 
     int mat_zheevd(char jobz, char uplo, size_t n, cxdbl *a,
-        size_t lda,
-        double *w, cxdbl *work, size_t lwork,
-        double *rwork, size_t lrwork, int *iwork, size_t liwork,
-        int *info)
+        size_t lda, double *w, int *info)
     {
 #ifndef NDEBUG
       if(n > (size_t)int_max || lda > (size_t)int_max){
         throw IndexOutOfBound("matrix dimension cannot exceed INT_MAX.");
       }
-
-      if(lwork > (size_t)int_max || lrwork > (size_t)int_max || liwork > (size_t)int_max){
-        throw IndexOutOfBound("lwork cannot exceed INT_MAX.");
-      }
 #endif
+
+      int res = 0;
+#ifdef HAVE_APPLE_LAPACK
       int dim = (int)n;
       int lower_dim = (int)lda;
-      int work_length = (int)lwork;
-      int rwork_length = (int)lrwork;
-      int iwork_length = (int)liwork;
+      // query sizes
+      int lwork = -1;
+      int lrwork = -1;
+      int liwork = -1;
+      auto work = std::make_unique<cxdbl[]>(1);
+      auto rwork = std::make_unique<double[]>(1);
+      auto iwork = std::make_unique<int[]>(1);
 
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
-      auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work);
+      auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work.get());
 
-      int res = zheevd_(&jobz, &uplo, &dim, clpk_a, &lower_dim, w,
-          clpk_work, &work_length, rwork, &rwork_length,
-          iwork, &iwork_length, info);
+      lwork = static_cast<int>(work[0].real());
+      lrwork = static_cast<int>(rwork[0]);
+      liwork = iwork[0];
+      work = std::make_unique<cxdbl[]>(lwork);
+      rwork = std::make_unique<double[]>(lrwork);
+      iwork = std::make_unique<int[]>(liwork);
+      // actual calculation
+      res = zheevd_(&jobz, &uplo, &dim, clpk_a, &lower_dim, w,
+          clpk_work, &lwork, rwork.get(), &lrwork,
+          iwork.get(), &liwork, info);
+#elif defined HAVE_LAPACKE
+      *info = LAPACKE_zheevd(LAPACK_COL_MAJOR, jobz, uplo, (int)n,
+          a, (int)lda, w);
+      res = *info;
+#endif
       return res;
     }
 
@@ -89,10 +95,6 @@ namespace matrix {
 #ifndef NDEBUG
       if(n > (size_t)int_max || lda > (size_t)int_max){
         throw IndexOutOfBound("matrix dimension cannot exceed INT_MAX.");
-      }
-
-      if(lwork > (size_t)int_max || lrwork > (size_t)int_max || liwork > (size_t)int_max){
-        throw IndexOutOfBound("lwork cannot exceed INT_MAX.");
       }
 
       if(m > (size_t)int_max) 
@@ -112,14 +114,27 @@ namespace matrix {
       int lower_idx = (int)il;
       int upper_idx = (int)iu;
 
+      int res = 0;
+#ifdef HAVE_APPLE_LAPACK
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
       auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work);
       auto clpk_z = reinterpret_cast<__CLPK_doublecomplex *>(z);
 
-      int res = zheevr_(&jobz, &range, &uplo, &dim, clpk_a, &lower_dim,
+      // query
+      
+      // calculate
+      res = zheevr_(&jobz, &range, &uplo, &dim, clpk_a, &lower_dim,
           &vl, &vu, &lower_idx, &upper_idx, &abstol, &n_eigen, w, clpk_z,
           &lead_dim_z, isuppz, clpk_work, &work_length, rwork, &rwork_length,
           iwork, &iwork_length, info);
+#elif defined HAVE_LAPACKE
+      *info = LAPACKE_zheevr(LAPACK_COL_MAJOR, jobz, range, uplo, 
+          dim, a, 
+          lower_dim, vl, vu, lower_idx, 
+          upper_idx, abstol, n_eigen,
+          w, z, lead_dim_z, isuppz);
+      res = *info;
+#endif
       return res;
     }
 

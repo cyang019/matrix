@@ -29,7 +29,7 @@ namespace matrix {
         int *ipiv, int *info);
 
     int mat_dgetri(size_t n, double *A, size_t lda, int * ipiv, 
-        double *work, size_t lwork, int *info);
+        int *info);
   } // namespace v1
 } // namespace matrix
 
