@@ -740,9 +740,6 @@ namespace matrix { inline namespace v1 {
 #endif
       auto ptr_ipiv = std::make_unique<int[]>(m_nrows);
       int errorHandler;
-      auto ptr_lwork = std::make_unique<double[]>(
-          m_nrows * m_ncols
-          );
 
       Matrix<double> result = *this;
       mat_dgetrf(m_nrows, m_ncols, result.m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
@@ -750,7 +747,7 @@ namespace matrix { inline namespace v1 {
         throw NonInvertibleMatrix("Matrix non-invertible.");
       }
 
-      mat_dgetri(m_nrows, result.m_data.get(), m_nrows, ptr_ipiv.get(), ptr_lwork.get(), m_nrows * 2, &errorHandler);
+      mat_dgetri(m_nrows, result.m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
 
       return result;
     }
@@ -775,15 +772,13 @@ namespace matrix { inline namespace v1 {
 #endif
       auto ptr_ipiv = std::make_unique<int[]>(m_nrows);
       int errorHandler;
-      auto ptr_lwork = std::make_unique<double[]>(
-          m_nrows * m_ncols);
 
       mat_dgetrf(m_nrows, m_ncols, m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
       if(errorHandler > 0){
         throw NonInvertibleMatrix("Matrix non-invertible.");
       }
 
-      mat_dgetri(m_nrows, m_data.get(), m_nrows, ptr_ipiv.get(), ptr_lwork.get(), m_nrows * 2, &errorHandler);
+      mat_dgetri(m_nrows, m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
 
       return *this;
     }

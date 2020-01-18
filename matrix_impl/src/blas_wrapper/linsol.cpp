@@ -99,8 +99,8 @@ namespace matrix {
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
       auto clpk_b = reinterpret_cast<__CLPK_doublecomplex *>(b);
 
-      int lwork = 1;
-      auto work = std::make_unique<cxdbl[]>(lwork);
+      int lwork = -1;
+      auto work = std::make_unique<cxdbl[]>(1);
       auto rwork = std::make_unique<double[]>(1);
       auto iwork = std::make_unique<int[]>(1);
 
@@ -111,7 +111,7 @@ namespace matrix {
       // query size first
       res = zgelsd_(&nrows, &ncols, &ncols_b,
           clpk_a, &lower_dim_a, clpk_b, &lower_dim_b,
-          s, rcond, rank, clpk_work, -1,
+          s, rcond, rank, clpk_work, &lwork,
           rwork.get(), iwork.get(), info);
 #ifdef VERBOSE
       auto t2 = std::clock();

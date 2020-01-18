@@ -41,7 +41,8 @@ namespace matrix {
       int rank = 0;
       int info = 0;
 
-      int res = mat_zgelsd(m, n, nrhs, 
+      // least square problem
+      mat_zgelsd(m, n, nrhs, 
           a_local.data(), lda, b_mat.get(), ldb, s.get(), &rcond,
           &rank, &info);
 
