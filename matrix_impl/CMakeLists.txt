@@ -142,7 +142,12 @@ elseif(UNIX)
 else()
 endif()
 
-target_link_libraries(matrix PRIVATE cblas clapack)
+if(HAVE_CLAPACK)
+  target_link_libraries(matrix PRIVATE cblas clapack)
+else()
+  target_link_libraries(matrix PRIVATE cblas lapacke)
+endif()
+
 target_include_directories(matrix
   PRIVATE
   "${BLAS_INCLUDE_DIR}"

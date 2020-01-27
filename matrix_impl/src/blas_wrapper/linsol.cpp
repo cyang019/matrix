@@ -146,7 +146,7 @@ namespace matrix {
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_zgelsd(LAPACK_COL_MAJOR, nrows, ncols, 
           ncols_b, a, lower_dim_a, b, lower_dim_b,
-          s, rcond, rank);
+          s, *rcond, rank);
       res = *info;
 #endif
       return res;

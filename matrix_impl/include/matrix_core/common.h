@@ -5,6 +5,7 @@
 #include <complex>
 #include <limits>
 #include <cstdint>
+#include <ctime>
 
 namespace matrix {
   inline namespace v1 {

@@ -152,7 +152,7 @@ namespace matrix {
           LAPACK_COL_MAJOR, jobz, range, uplo, 
           dim, a, 
           lower_dim, vl, vu, lower_idx, 
-          upper_idx, abstol, n_eigen,
+          upper_idx, abstol, &n_eigen,
           w, z, lead_dim_z, isuppz);
       res = *info;
 #endif
@@ -171,6 +171,7 @@ namespace matrix {
 
       int dim = (int)n;
       int lower_dim = (int)lda;
+      int res = 0;
 #ifdef HAVE_APPLE_LAPACK
       int lwork = -1;
       /// unique_ptr<cxdbl> a; a.get() directly
@@ -180,7 +181,7 @@ namespace matrix {
       // query
       auto work = std::make_unique<cxdbl[]>(1);
       auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work.get());
-      int res = zhetrd_(&uplo, &dim, clpk_a, &lower_dim, d, e,
+      res = zhetrd_(&uplo, &dim, clpk_a, &lower_dim, d, e,
           clpk_tau, clpk_work, &lwork, info);
 
       // calculate
