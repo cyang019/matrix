@@ -1,6 +1,7 @@
 #ifndef _MATRIX_ERRORS_H
 #define _MATRIX_ERRORS_H
 
+#include <stdexcept>
 #include <exception>
 
 

@@ -2,6 +2,7 @@
 #include "cblas.h"
 #include "blas_wrapper/cblas_level2.h"
 #include "matrix_core/errors.h"
+#include <stdexcept>
 
 
 namespace matrix {
