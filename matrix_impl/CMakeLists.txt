@@ -1,4 +1,8 @@
-add_library(matrix SHARED "")
+if(NOT USE_EMCC)
+  add_library(matrix SHARED "")
+else()
+  add_library(matrix STATIC "")
+endif()
 
 if(NOT DEFINED USE_DEBUG_MODEL) 
   set(USE_DEBUG_MODEL ON)
@@ -12,133 +16,124 @@ if(NOT DEFINED CMAKE_CXX_FLAGS_RELEASE)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
 endif()
 
+message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
+
+#if(USE_EMCC)
+#  target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror -emit-llvm --target=wasm32-unknown-unknown-elf -S)
+#else()
+#  target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
+#endif()
 target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
 set(_possible_paths ${CMAKE_PREFIX_PATH}/include /usr/include /usr/local/include)
 
-if (APPLE)
-  message( STATUS "OSX detected. Link cblas..." )
-  #target_link_libraries(matrix INTERFACE "-framework Foundation")
-  find_package(BLAS REQUIRED)
-  message( STATUS "BLAS found: ${BLAS_LIBRARIES}" )
-  message( STATUS BLAS_HOME: ${BLAS_HOME} )
-  message( STATUS BLAS_DIR: ${BLAS_DIR} )
-  message( STATUS BLAS_LIBDIR: ${BLAS_LIBDIR} )
-  list(GET BLAS_LIBRARIES 0 BLAS_LIBRARY_DIR)
-  find_path(BLAS_INCLUDE_DIRS 
-    NAMES 
-      cblas.h
-    HINTS
-      /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
-      ${_possible_paths}
-      $ENV{BLAS_HOME}/include)
-  list(GET BLAS_INCLUDE_DIRS 0 BLAS_INCLUDE_DIR)
-  INCLUDE_DIRECTORIES(${BLAS_INCLUDE_DIR})
-  message( STATUS "cblas.h => ${BLAS_INCLUDE_DIR}" )
-
-  # ===== Look For Lapack =====
-  find_package(LAPACK REQUIRED)
-  message( STATUS "LAPACK found: ${LAPACK_LIBRARIES}" )
-  message( STATUS LAPACK_HOME: ${LAPACK_HOME} )
-  message( STATUS LAPACK_DIR: ${LAPACK_DIR} )
-  message( STATUS LAPACK_LIBDIR: ${LAPACK_LIBDIR} )
-  find_path(CLAPACK_INCLUDE_DIRS 
-    NAMES 
-      clapack.h
-    PATHS
-      /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
-      ${_possible_paths}
-      $ENV{LAPACK_HOME}/include)
-  #set(BLAS_INCLUDE_DIR
-  #  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers"
-  #)
-  option(HAVE_APPLE_LAPACK "APPLE_LAPACK" ON)
-
-  #add_compile_definitions(WITH_VECLIB_CBLAS)
-  #unset(matrix_LIB_DEPENDS CACHE)
-elseif(UNIX)
-  # ===== Look For BLAS =====
-  find_package(BLAS REQUIRED)
-  message( STATUS "BLAS found: ${BLAS_LIBRARIES}" )
-  message( STATUS BLAS_HOME: ${BLAS_HOME} )
-  message( STATUS BLAS_DIR: ${BLAS_DIR} )
-  message( STATUS BLAS_LIBDIR: ${BLAS_LIBDIR} )
-  list(GET BLAS_LIBRARIES 0 BLAS_LIBRARY_DIR)
-  find_path(BLAS_INCLUDE_DIRS 
-    NAMES 
-      cblas.h
-    HINTS
-      ${_possible_paths}
-      $ENV{BLAS_HOME}/include)
-  list(GET BLAS_INCLUDE_DIRS 0 BLAS_INCLUDE_DIR)
-  INCLUDE_DIRECTORIES(${BLAS_INCLUDE_DIR})
-  message( STATUS "cblas.h => ${BLAS_INCLUDE_DIR}" )
-
-  # ===== Look For Lapack =====
-  find_package(LAPACK REQUIRED)
-  message( STATUS "LAPACK found: ${LAPACK_LIBRARIES}" )
-  message( STATUS LAPACK_HOME: ${LAPACK_HOME} )
-  message( STATUS LAPACK_DIR: ${LAPACK_DIR} )
-  message( STATUS LAPACK_LIBDIR: ${LAPACK_LIBDIR} )
-  find_path(CLAPACK_INCLUDE_DIRS 
-    NAMES 
-      clapack.h
-    PATHS
-      ${_possible_paths}
-      $ENV{LAPACK_HOME}/include)
-    if(NOT CLAPACK_INCLUDE_DIRS)
-      find_path(LAPACKE_INCLUDE_DIRS
-      NAMES
-        lapacke.h
-      PATHS
-        /usr/include
-        /usr/local/include
-        $ENV{LAPACK_HOME}/include)
-      if(NOT LAPACKE_INCLUDE_DIRS)
-        message( FATAL_ERROR "LAPACK c interface headers missing.")
-      else()
-        message( STATUS "lapacke.h => ${LAPACKE_INCLUDE_DIRS}" )
-        list(GET LAPACKE_INCLUDE_DIRS 0 LAPACK_INCLUDE_DIR)
-        option(HAVE_LAPACKE "LAPACKE" ON)
-        option(HAVE_CLAPACK OFF)
-      endif()
-    else()
-      message( STATUS "clapack.h => ${CLAPACK_INCLUDE_DIRS}" )
-      list(GET CLAPACK_INCLUDE_DIRS 0 LAPACK_INCLUDE_DIR)
-      option(HAVE_CLAPACK "CLAPACK" ON)
-        option(HAVE_LAPACKE OFF)
-    endif()
-
-  INCLUDE_DIRECTORIES(${LAPACK_INCLUDE_DIR})
-  # else()
-  #   message( STATUS "Use OpenBLAS-0.3.6" )
-  #   configure_file("${PROJECT_SOURCE_DIR}/dependencies/OpenBLAS-0.3.6/cmake/OpenBLASConfig.cmake.in" "${PROJECT_BINARY_DIR}/OpenBLASConfig.cmake")
-  #   include(${PROJECT_BINARY_DIR}/OpenBLASConfig.cmake)
-  #   find_package(BLAS REQUIRED)
-  #   if(BLAS_FOUND)
-  #     message("Found Blas located at:")
-  #     list(GET BLAS_LIBRARIES 0 BLAS_LIBRARY_DIR)
-  #     message("${BLAS_LIBRARY_DIR}")
-  #     find_path(BLAS_INCLUDE_DIRS cblas.h
-  #       ${BLAS_LIBRARY_DIR}/include)
-  #     list(GET BLAS_INCLUDE_DIRS 0 BLAS_INCLUDE_DIR)
-  #     message("Blas Include Dir: ${BLAS_INCLUDE_DIR}")
-  #   endif()
-  # endif()
+if(USE_EMCC)
+  find_library(CBLAS ${CMAKE_CURRENT_LIST_DIR}/libopenblasp-r0.3.7.a)
+  set(CBLAS_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include")
+  set(LAPACK_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include")
 else()
+  find_package(CBLAS REQUIRED)
+  message( STATUS "CBLAS_LIBRARIES: ${CBLAS_LIBRARIES}" )
+  message( STATUS "CBLAS_INCLUDE_DIRS: ${CBLAS_INCLUDE_DIRS}" )
+  list(GET CBLAS_LIBRARIES 0 CBLAS_LIBRARY_DIR)
+  list(GET CBLAS_INCLUDE_DIRS  0 CBLAS_INCLUDE_DIR)
 endif()
 
-if(HAVE_APPLE_LAPACK)
-  message(STATUS "Link veclib lapack...")
-  target_link_libraries(matrix PRIVATE cblas clapack)
+#  find_path(BLAS_INCLUDE_DIRS 
+#    NAMES 
+#      cblas.h
+#    HINTS
+#      /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
+#      ${_possible_paths}
+#      $ENV{BLAS_HOME}/include)
+#  list(GET BLAS_INCLUDE_DIRS 0 BLAS_INCLUDE_DIR)
+include_directories(${CBLAS_INCLUDE_DIR})
+message( STATUS "cblas.h => ${CBLAS_INCLUDE_DIR}" )
+
+if(USE_EMCC)
+  target_link_libraries(matrix PRIVATE CBLAS)
+  option(HAVE_LAPACKE "LAPACKE" ON)
 else()
-  message(STATUS "Link lapacke...")
-  target_link_libraries(matrix PRIVATE cblas lapacke)
+  if (APPLE)
+    message( STATUS "OSX detected..." )
+  
+    # ===== Look For Lapack =====
+    find_package(LAPACK REQUIRED)
+    message( STATUS "LAPACK found: ${LAPACK_LIBRARIES}" )
+    message( STATUS LAPACK_HOME: ${LAPACK_HOME} )
+    message( STATUS LAPACK_DIR: ${LAPACK_DIR} )
+    message( STATUS LAPACK_LIBDIR: ${LAPACK_LIBDIR} )
+    find_path(CLAPACK_INCLUDE_DIRS 
+      NAMES 
+        clapack.h
+      PATHS
+        /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
+        ${_possible_paths}
+        $ENV{LAPACK_HOME}/include)
+    #set(BLAS_INCLUDE_DIR
+    #  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers"
+    #)
+    option(HAVE_APPLE_LAPACK "APPLE_LAPACK" ON)
+  
+    #add_compile_definitions(WITH_VECLIB_CBLAS)
+    #unset(matrix_LIB_DEPENDS CACHE)
+  elseif(UNIX)
+    message( STATUS "Linux detected..." )
+  
+    # ===== Look For Lapack =====
+    find_package(LAPACK REQUIRED)
+    message( STATUS "LAPACK found: ${LAPACK_LIBRARIES}" )
+    message( STATUS LAPACK_HOME: ${LAPACK_HOME} )
+    message( STATUS LAPACK_DIR: ${LAPACK_DIR} )
+    message( STATUS LAPACK_LIBDIR: ${LAPACK_LIBDIR} )
+    find_path(CLAPACK_INCLUDE_DIRS 
+      NAMES 
+        clapack.h
+      PATHS
+        ${_possible_paths}
+        $ENV{LAPACK_HOME}/include)
+      if(NOT CLAPACK_INCLUDE_DIRS)
+        find_path(LAPACKE_INCLUDE_DIRS
+        NAMES
+          lapacke.h
+        PATHS
+          /usr/include
+          /usr/local/include
+          $ENV{LAPACK_HOME}/include)
+        if(NOT LAPACKE_INCLUDE_DIRS)
+          message( FATAL_ERROR "LAPACK c interface headers missing.")
+        else()
+          message( STATUS "lapacke.h => ${LAPACKE_INCLUDE_DIRS}" )
+          list(GET LAPACKE_INCLUDE_DIRS 0 LAPACK_INCLUDE_DIR)
+          option(HAVE_LAPACKE "LAPACKE" ON)
+          option(HAVE_CLAPACK OFF)
+        endif()
+      else()
+        message( STATUS "clapack.h => ${CLAPACK_INCLUDE_DIRS}" )
+        list(GET CLAPACK_INCLUDE_DIRS 0 LAPACK_INCLUDE_DIR)
+        option(HAVE_CLAPACK "CLAPACK" ON)
+          option(HAVE_LAPACKE OFF)
+      endif()
+  
+    include_directories(${LAPACK_INCLUDE_DIR})
+  else()
+  endif()
+  
+  if(HAVE_APPLE_LAPACK)
+    message(STATUS "Link veclib lapack...")
+    target_link_libraries(matrix PRIVATE cblas clapack)
+  else()
+    message(STATUS "Link lapacke...")
+    target_link_libraries(matrix PRIVATE cblas lapacke)
+  endif()
 endif()
 
 target_include_directories(matrix
   PRIVATE
-  "${BLAS_INCLUDE_DIR}"
+  "${CBLAS_INCLUDE_DIR}"
   "${LAPACK_INCLUDE_DIR}"
   PUBLIC
   "${CMAKE_CURRENT_LIST_DIR}/include"
