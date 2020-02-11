@@ -37,13 +37,16 @@ namespace matrix {
         }
       }
 
-      auto s = make_unique<double[]>(std::min(m,n));
+      auto jpvt = make_unique<int[]>(n);
+      for(size_t i = 0; i < n; ++i){
+        jpvt[i] = 0;
+      }
       int rank = 0;
       int info = 0;
 
       // least square problem
-      mat_zgelsd(m, n, nrhs, 
-          a_local.data(), lda, b_mat.get(), ldb, s.get(), &rcond,
+      mat_zgelsy(m, n, nrhs, 
+          a_local.data(), lda, b_mat.get(), ldb, jpvt.get(), &rcond,
           &rank, &info);
 
       Matrix<cxdbl> x(n, nrhs);
