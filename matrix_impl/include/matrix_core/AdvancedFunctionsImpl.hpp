@@ -170,8 +170,8 @@ namespace matrix { inline namespace v1 {
 #ifndef NDEBUG
           if(lhs.nrows() != rhs.nrows() || lhs.ncols() != rhs.ncols())
             throw MatrixSizeMismatchError("matrices need to have the same size to project.");
-          if(lhs.nrows() != lhs.ncols())
-            throw MatrixSizeMismatchError("Projection needs to be done on a square matrix.");
+          //if(lhs.nrows() != lhs.ncols())
+          //  throw MatrixSizeMismatchError("Projection needs to be done on a square matrix.");
 #endif
           if constexpr(is_complex<T>::value){
             T res = lvl1_zdotc(lhs.nelements(), lhs.data(), 1, rhs.data(), 1);
@@ -179,12 +179,12 @@ namespace matrix { inline namespace v1 {
           } else if constexpr(is_double<T>::value){
             T res = lvl1_ddot(lhs.nelements(), lhs.data(), 1, rhs.data(), 1);
             return res;
-          } else {
+          } else {  /// Trace(lhs * rhs.T)
             T res = 0;
             for(size_t i = 0; i < lhs.ncols(); ++i){
               T temp = 0;
               for(size_t j = 0; j < lhs.nrows(); ++j){
-                temp += lhs(j,i) * rhs(i,j);
+                temp += lhs(j,i) * rhs(j,i);
               }
               res += temp;
             }
