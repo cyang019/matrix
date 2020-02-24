@@ -17,6 +17,21 @@ namespace matrix {
         const CblasOrder &layout, const CblasTranspose &TransA,
         size_t m, size_t n, cxdbl alpha, const cxdbl *A, size_t lda,
         const cxdbl *x, int incx, cxdbl beta, cxdbl *y, int incy);
+
+    void lvl2_dger(
+        const CblasOrder &layout,
+        size_t m, size_t n, double alpha, const double *x, size_t inc_x,
+        const double *y, size_t inc_y, double *a, size_t lda);
+
+    void lvl2_zgeru(
+        const CblasOrder &layout,
+        size_t m, size_t n, cxdbl alpha, const cxdbl *x, size_t inc_x,
+        const cxdbl *y, size_t inc_y, cxdbl *a, size_t lda);
+
+    void lvl2_zgerc(
+        const CblasOrder &layout,
+        size_t m, size_t n, cxdbl alpha, const cxdbl *x, size_t inc_x,
+        const cxdbl *y, size_t inc_y, cxdbl *a, size_t lda);
   } // namespace v1
 } // namespace matrix
 
