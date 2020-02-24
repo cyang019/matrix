@@ -121,17 +121,44 @@ namespace matrix { inline namespace v1 {
         {
           if(m1.nrows() == 0 || m1.ncols() == 0) return m2;
           if(m2.nrows() == 0 || m2.ncols() == 0) return m1;
-          size_t nrows = m1.nrows() * m2.nrows();
-          size_t ncols = m1.ncols() * m2.ncols();
-          Matrix<T> res(nrows, ncols);
-
-          for(size_t c1 = 0; c1 < m1.ncols(); ++c1){
-            for(size_t r1 = 0; r1 < m1.nrows(); ++r1){
-              for(size_t c2 = 0; c2 < m2.ncols(); ++c2){
-                for(size_t r2 = 0; r2 < m2.nrows(); ++r2){
-                  const size_t r = r1*m2.nrows() + r2;
-                  const size_t c = c1*m2.ncols() + c2;
-                  res(r,c) = m1(r1,c1) * m2(r2, c2);
+          const size_t nrows1 = m1.nrows();
+          const size_t ncols1 = m1.ncols();
+          const size_t nrows2 = m2.nrows();
+          const size_t ncols2 = m2.ncols();
+          size_t nrows = nrows1 * nrows2;
+          size_t ncols = ncols1 * ncols2;
+          Matrix<T> res = zeros<T>(nrows, ncols);
+          if constexpr(is_double<T>::value){
+            for(size_t c1 = 0; c1 < ncols1; ++c1){
+              for(size_t c2 = 0; c2 < ncols2; ++c2){
+                lvl2_dger(CblasOrder::CblasColMajor,
+                    nrows1, nrows2, 1.0,
+                    m1.data() + c1 * nrows1, 1u,
+                    m2.data() + c2 * nrows2, 1u,
+                    res.data() + c1 * nrows, nrows);
+              }
+            }
+          }
+          else if constexpr(is_complex<T>::value){
+            for(size_t c1 = 0; c1 < ncols1; ++c1){
+              for(size_t c2 = 0; c2 < ncols2; ++c2){
+                lvl2_zgeru(CblasOrder::CblasColMajor,
+                    nrows1, nrows2, cxdbl(1.0, 0.0),
+                    m1.data() + c1 * nrows1, 1u,
+                    m2.data() + c2 * nrows2, 1u,
+                    res.data() + c1 * nrows, nrows);
+              }
+            }
+          }
+          else {
+            for(size_t c1 = 0; c1 < m1.ncols(); ++c1){
+              for(size_t r1 = 0; r1 < m1.nrows(); ++r1){
+                for(size_t c2 = 0; c2 < m2.ncols(); ++c2){
+                  for(size_t r2 = 0; r2 < m2.nrows(); ++r2){
+                    const size_t r = r1*m2.nrows() + r2;
+                    const size_t c = c1*m2.ncols() + c2;
+                    res(r,c) = m1(r1,c1) * m2(r2, c2);
+                  }
                 }
               }
             }
