@@ -127,30 +127,52 @@ namespace matrix { inline namespace v1 {
           const size_t ncols2 = m2.ncols();
           size_t nrows = nrows1 * nrows2;
           size_t ncols = ncols1 * ncols2;
-          Matrix<T> res = zeros<T>(nrows, ncols);
+          Matrix<T> tmp = zeros<T>(nrows, ncols);
+          Matrix<T> res(nrows, ncols);
           if constexpr(is_double<T>::value){
-            for(size_t c1 = 0; c1 < ncols1; ++c1){
-              for(size_t c2 = 0; c2 < ncols2; ++c2){
-                lvl2_dger(CblasOrder::CblasColMajor,
-                    nrows1, nrows2, 1.0,
-                    m1.data() + c1 * nrows1, 1u,
-                    m2.data() + c2 * nrows2, 1u,
-                    res.data() + c1 * nrows, nrows);
+            // outer product
+            lvl2_dger(CblasOrder::CblasColMajor,
+                m1.nelements(), m2.nelements(), 1.0,
+                m1.data(), 1,
+                m2.data(), 1,
+                tmp.data(), nrows);
+            std::cout << "tmp:\n" << tmp;
+            // rearrange elements
+            for(size_t i = 0; i < m1.nelements(); ++i){
+              for(size_t offset = 0; offset < ncols2; ++offset){
+                const size_t orig_offset = m2.nelements() * i + offset;
+                const size_t dest_c = (i % ncols1) * ncols2 + offset;
+                const size_t dest_r = (i / ncols1) * nrows2;
+                const size_t dest_offset = dest_c * nrows + dest_r;
+                lvl1_dcopy(
+                    nrows2, 
+                    tmp.data() + orig_offset, ncols2, 
+                    res.data() + dest_offset, 1);      
               }
             }
           }
           else if constexpr(is_complex<T>::value){
-            for(size_t c1 = 0; c1 < ncols1; ++c1){
-              for(size_t c2 = 0; c2 < ncols2; ++c2){
-                lvl2_zgeru(CblasOrder::CblasColMajor,
-                    nrows1, nrows2, cxdbl(1.0, 0.0),
-                    m1.data() + c1 * nrows1, 1u,
-                    m2.data() + c2 * nrows2, 1u,
-                    res.data() + c1 * nrows, nrows);
+            // outer product
+            lvl2_zgeru(CblasOrder::CblasColMajor,
+                m1.nelements(), m2.nelements(), cxdbl(1.0, 0.0),
+                m1.data(), 1,
+                m2.data(), 1,
+                tmp.data(), nrows);
+            // rearrange elements
+            for(size_t i = 0; i < m1.nelements(); ++i){
+              for(size_t offset = 0; offset < ncols2; ++offset){
+                const size_t orig_offset = m2.nelements() * i + offset;
+                const size_t dest_c = (i % ncols1) * ncols2 + offset;
+                const size_t dest_r = (i / ncols1) * nrows2;
+                const size_t dest_offset = dest_c * nrows + dest_r;
+                lvl1_zcopy(
+                    nrows2, 
+                    tmp.data() + orig_offset, ncols2, 
+                    res.data() + dest_offset, 1);      
               }
             }
           }
-          else {
+          else {    // default other types
             for(size_t c1 = 0; c1 < m1.ncols(); ++c1){
               for(size_t r1 = 0; r1 < m1.nrows(); ++r1){
                 for(size_t c2 = 0; c2 < m2.ncols(); ++c2){
@@ -163,6 +185,7 @@ namespace matrix { inline namespace v1 {
               }
             }
           }
+
           return res;
         }
 
