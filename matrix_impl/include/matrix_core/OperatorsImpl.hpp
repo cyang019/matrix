@@ -34,7 +34,8 @@ namespace matrix {
       return !operator==<T>(lhs, rhs);
     }
 
-    inline bool allclose(const Matrix<double> &lhs, const Matrix<double> &rhs, double eps)
+    inline bool allclose(const Matrix<double> &lhs, const Matrix<double> &rhs, 
+        double atol, double rtol)
     {
       if(lhs.ncols() != rhs.ncols() || lhs.nrows() != rhs.nrows())
         return false;
@@ -43,7 +44,8 @@ namespace matrix {
       auto d1 = lhs.data();
       auto d2 = rhs.data();
       for(size_t i = 0; i < n_total; ++i){
-        if(std::abs(d1[i] - d2[i]) > eps){
+        const double bound = atol + rtol * std::abs(d2[i]);
+        if(std::abs(d1[i] - d2[i]) > bound){
           return false;
         }
       }
@@ -51,7 +53,8 @@ namespace matrix {
       return true;
     }
 
-    inline bool allclose(const Matrix<cxdbl> &lhs, const Matrix<cxdbl> &rhs, double eps)
+    inline bool allclose(const Matrix<cxdbl> &lhs, const Matrix<cxdbl> &rhs, 
+        double atol, double rtol)
     {
       if(lhs.ncols() != rhs.ncols() || lhs.nrows() != rhs.nrows())
         return false;
@@ -60,10 +63,8 @@ namespace matrix {
       auto d1 = lhs.data();
       auto d2 = rhs.data();
       for(size_t i = 0; i < n_total; ++i){
-        if(std::abs(d1[i].real() - d2[i].real()) > eps){
-          return false;
-        }
-        if(std::abs(d1[i].imag() - d2[i].imag()) > eps){
+        const double bound = atol + rtol * std::abs(d2[i]);
+        if(std::abs(d1[i] - d2[i]) > bound){
           return false;
         }
       }

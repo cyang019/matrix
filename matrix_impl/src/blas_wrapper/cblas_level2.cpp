@@ -3,6 +3,7 @@
 #include "blas_wrapper/cblas_level2.h"
 #include "matrix_core/errors.h"
 #include <stdexcept>
+#include <cmath>
 
 
 namespace matrix {
@@ -45,7 +46,8 @@ namespace matrix {
       }
 #endif
       cblas_dger((CBLAS_ORDER)layout,
-          (int)m, (int)n, alpha, x, (int)inc_x, y, (int)inc_y, a, (int)lda);
+          (int)m, (int)n, alpha, x, (int)inc_x, y, (int)inc_y, 
+          a, std::max(1, (int)lda));
     }
 
     void lvl2_zgeru(
@@ -59,7 +61,8 @@ namespace matrix {
       }
 #endif
       cblas_zgeru((CBLAS_ORDER)layout,
-          (int)m, (int)n, &alpha, x, (int)inc_x, y, inc_y, a, (int)lda);
+          (int)m, (int)n, &alpha, x, (int)inc_x, y, (int)inc_y,
+          a, std::max(1, (int)lda));
     }
 
     void lvl2_zgerc(
@@ -73,7 +76,8 @@ namespace matrix {
       }
 #endif
       cblas_zgerc((CBLAS_ORDER)layout,
-          (int)m, (int)n, &alpha, x, (int)inc_x, y, inc_y, a, (int)lda);
+          (int)m, (int)n, &alpha, x, (int)inc_x, y, (int)inc_y, 
+          a, std::max(1, (int)lda));
     }
   } // namespace v1
 } // namespace matrix

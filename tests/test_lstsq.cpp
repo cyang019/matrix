@@ -165,7 +165,8 @@ namespace {
           cxdbl(0.030878066351274228, 1.0269651033665897e-10), 
         }
       };
-      ASSERT_TRUE(allclose(rho_eq, desired_rho_eq, 1.0e-3));
+      cout << "Differences:\n" << rho_eq - desired_rho_eq << endl;
+      ASSERT_TRUE(allclose(rho_eq, desired_rho_eq, 1.0e-5, 1.0e-1));
     }
 }
 

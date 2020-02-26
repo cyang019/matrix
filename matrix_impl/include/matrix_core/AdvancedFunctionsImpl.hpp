@@ -121,32 +121,34 @@ namespace matrix { inline namespace v1 {
         {
           if(m1.nrows() == 0 || m1.ncols() == 0) return m2;
           if(m2.nrows() == 0 || m2.ncols() == 0) return m1;
-          const size_t nrows1 = m1.nrows();
-          const size_t ncols1 = m1.ncols();
-          const size_t nrows2 = m2.nrows();
-          const size_t ncols2 = m2.ncols();
-          size_t nrows = nrows1 * nrows2;
-          size_t ncols = ncols1 * ncols2;
-          Matrix<T> tmp = zeros<T>(nrows, ncols);
+          const size_t sz1 = m1.nelements();
+          const size_t sz2 = m2.nelements();
+          const size_t r1 = m1.nrows();
+          const size_t c1 = m1.ncols();
+          const size_t r2 = m2.nrows();
+          const size_t c2 = m2.ncols();
+          size_t nrows = r1 * r2;
+          size_t ncols = c1 * c2;
+          Matrix<T> tmp = zeros<T>(sz2, sz1);
           Matrix<T> res(nrows, ncols);
           if constexpr(is_double<T>::value){
             // outer product
             lvl2_dger(CblasOrder::CblasColMajor,
-                m1.nelements(), m2.nelements(), 1.0,
-                m1.data(), 1,
+                sz2, sz1, 1.0,
                 m2.data(), 1,
-                tmp.data(), nrows);
-            std::cout << "tmp:\n" << tmp;
+                m1.data(), 1,
+                tmp.data(), sz2);
             // rearrange elements
-            for(size_t i = 0; i < m1.nelements(); ++i){
-              for(size_t offset = 0; offset < ncols2; ++offset){
-                const size_t orig_offset = m2.nelements() * i + offset;
-                const size_t dest_c = (i % ncols1) * ncols2 + offset;
-                const size_t dest_r = (i / ncols1) * nrows2;
-                const size_t dest_offset = dest_c * nrows + dest_r;
+            for(size_t idx = 0; idx < sz1; ++idx){
+              for(size_t offset = 0; offset < c2; ++offset){
+                const size_t orig_r = offset * r2; 
+                const size_t orig_offset = orig_r + idx * sz2;
+                const size_t dest_c = (idx / r1) * c2 + offset;
+                const size_t dest_r = (idx % r1) * r2;
+                const size_t dest_offset = dest_r + dest_c * nrows;
                 lvl1_dcopy(
-                    nrows2, 
-                    tmp.data() + orig_offset, ncols2, 
+                    r2, 
+                    tmp.data() + orig_offset, 1, 
                     res.data() + dest_offset, 1);      
               }
             }
@@ -154,20 +156,21 @@ namespace matrix { inline namespace v1 {
           else if constexpr(is_complex<T>::value){
             // outer product
             lvl2_zgeru(CblasOrder::CblasColMajor,
-                m1.nelements(), m2.nelements(), cxdbl(1.0, 0.0),
-                m1.data(), 1,
+                sz2, sz1, cxdbl(1.0, 0.0),
                 m2.data(), 1,
-                tmp.data(), nrows);
+                m1.data(), 1,
+                tmp.data(), sz2);
             // rearrange elements
-            for(size_t i = 0; i < m1.nelements(); ++i){
-              for(size_t offset = 0; offset < ncols2; ++offset){
-                const size_t orig_offset = m2.nelements() * i + offset;
-                const size_t dest_c = (i % ncols1) * ncols2 + offset;
-                const size_t dest_r = (i / ncols1) * nrows2;
-                const size_t dest_offset = dest_c * nrows + dest_r;
+            for(size_t idx = 0; idx < m1.nelements(); ++idx){
+              for(size_t offset = 0; offset < c2; ++offset){
+                const size_t orig_r = offset * r2; 
+                const size_t orig_offset = orig_r + idx * sz2;
+                const size_t dest_c = (idx / r1) * c2 + offset;
+                const size_t dest_r = (idx % r1) * r2;
+                const size_t dest_offset = dest_r + dest_c * nrows;
                 lvl1_zcopy(
-                    nrows2, 
-                    tmp.data() + orig_offset, ncols2, 
+                    r2, 
+                    tmp.data() + orig_offset, 1, 
                     res.data() + dest_offset, 1);      
               }
             }

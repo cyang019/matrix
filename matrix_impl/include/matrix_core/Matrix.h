@@ -39,8 +39,10 @@ namespace matrix {
         template<typename T>
         bool operator!=(const Matrix<T> &, const Matrix<T> &);
 
-        bool allclose(const Matrix<double> &, const Matrix<double> &, double);
-        bool allclose(const Matrix<cxdbl> &, const Matrix<cxdbl> &, double);
+        bool allclose(const Matrix<double> &, const Matrix<double> &, 
+            double atol, double rtol=1.0e-5);
+        bool allclose(const Matrix<cxdbl> &, const Matrix<cxdbl> &,
+            double atol, double rtol=1.0e-5);
 
         template<typename T>
         Matrix<T> operator+(const Matrix<T> &, const Matrix<T> &);
