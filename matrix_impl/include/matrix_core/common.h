@@ -48,10 +48,9 @@ namespace matrix {
     struct is_int<int> : std::true_type {};
 
     template<typename T>
-    bool approxEqual(const T &num1, const T &num2, double e, double rtol=1.0e-14)
+    bool approxEqual(const T &num1, const T &num2, double atol, double rtol=1.0e-14)
     {
-      if (std::abs(num1 - num2) <= e + rtol*std::abs(num2)) return true;
-      return false;
+      return (std::abs(num1 - num2) < atol + rtol*std::abs(num2));
     }
 
     inline long double factorial(std::size_t n)
