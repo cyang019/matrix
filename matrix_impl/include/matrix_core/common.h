@@ -50,7 +50,7 @@ namespace matrix {
     template<typename T>
     bool approxEqual(const T &num1, const T &num2, double atol, double rtol=1.0e-14)
     {
-      return (std::abs(num1 - num2) < atol, + rtol*std::abs(num2));
+      return (std::abs(num1 - num2) < atol + rtol*std::abs(num2));
     }
 
     inline long double factorial(std::size_t n)
