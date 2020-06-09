@@ -10,3 +10,6 @@ build/**
 
 # ignore ctag file
 tags
+
+# ignore hardcopied static lib
+**/*.a

@@ -23,7 +23,7 @@ message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 #else()
 #  target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
 #endif()
-target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
+target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
