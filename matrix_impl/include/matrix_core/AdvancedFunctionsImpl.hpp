@@ -351,6 +351,77 @@ namespace matrix { inline namespace v1 {
           }
           return res;
         }
+
+        inline bool isPowerOfTwo(size_t n)
+        {
+          return n != 0 && (n & (n-1)) == 0;
+        }
+
+        // summation of geometric sequence m + m^2 + m^3 + ... + m^n
+        template<typename T>
+        Matrix<T> geometricSum2Power(const Matrix<T> &sq_mat, size_t n)
+        {
+#ifndef NDEBUG
+          if(sq_mat.nrows() != sq_mat.ncols()) {
+            throw MatrixIsNotSquare("need square matrix to calculate geometric sequence.");
+          }
+          if(!isPowerOfTwo(n)){
+            throw IllegalValue("n needs to be power of 2");
+          }
+#endif
+          if(n == 0) {
+            return zeros<T>(sq_mat.nrows(), sq_mat.ncols());
+          }
+          else if (n == 1) {
+            return sq_mat;
+          }
+
+          Matrix<T> ratio = sq_mat;
+          Matrix<T> t1 = sq_mat;
+          size_t i = 1;
+          while(i < n) {
+            t1 = t1 + ratio * t1;
+            ratio = ratio * ratio;
+            i <<= 1;
+          }
+          t1 = t1 + ratio * t1; ///< calculate outside the loop to avoid one extra ratio * ratio calculation
+          return t1;
+        }
+
+        template<typename T>
+        Matrix<T> geometricSum(const Matrix<T> &mat, size_t n)
+        {
+#ifndef NDEBUG
+          std::cout << "geometricSum for mat of order " << n << "\n";
+#endif
+          Matrix<T> result = zeros<T>(mat.nrows(), mat.ncols());
+          size_t i = 1;
+          while(i < n) {
+            if(i & n) {
+#ifndef NDEBUG
+              std::cout << "\ti: " << i << "\n";
+#endif
+              if(i == 1) {
+                result += mat;
+              } else {
+                if(n % i == 0) {
+                  result += geometricSum2Power(mat, i);
+                } else {
+                  result += ::matrix::pow(mat, n%i) * geometricSum2Power(mat, i);
+                }
+              }
+            }
+            i <<= 1;
+          }
+          if(i == n) {
+#ifndef NDEBUG
+              std::cout << "\ti: " << i << "\n";
+#endif
+            return geometricSum2Power(mat, n);
+          }
+          return result;
+        }
+
 } // namespace v1
 } // namespace matrix
 
