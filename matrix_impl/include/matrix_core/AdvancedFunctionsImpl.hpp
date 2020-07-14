@@ -369,16 +369,18 @@ namespace matrix { inline namespace v1 {
             throw IllegalValue("n needs to be power of 2");
           }
 #endif
-          if(n == 0) {
-            return zeros<T>(sq_mat.nrows(), sq_mat.ncols());
-          }
-          else if (n == 1) {
+          if(n == 1) {
             return sq_mat;
+          }
+          if(n == 0) {
+            Matrix<T> t1 = zeros<T>(sq_mat.nrows(), sq_mat.ncols());
+            return t1;
           }
 
           Matrix<T> ratio = sq_mat;
-          Matrix<T> t1 = sq_mat;
+          Matrix<T> t1 = ratio;
           size_t i = 1;
+          i <<= 1;
           while(i < n) {
             t1 = t1 + ratio * t1;
             ratio = ratio * ratio;
