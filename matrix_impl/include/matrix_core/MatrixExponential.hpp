@@ -15,8 +15,8 @@ namespace matrix { inline namespace v1 {
 #endif
       const auto A0 = identity<T>(mat.nrows());
       auto A2 = mat * mat;
-      double d6 = std::pow(normest(A2, 3), 1.0/6);
-      const double eta_1 = std::max(std::pow(normest(A2, 2), 0.25), d6);
+      double d6 = std::pow(normest_simplified(A2, 3), 1.0/6);
+      const double eta_1 = std::max(std::pow(normest_simplified(A2, 2), 0.25), d6);
       if(eta_1 < theta_3 + eps && ell(mat, 3) == 0){
         Matrix<T> u3 = mat * (b(3, 1) * A0 + b(3, 3) * A2);
         Matrix<T> v3 = b(3, 0) * A0 + b(3, 2) * A2;
@@ -38,7 +38,7 @@ namespace matrix { inline namespace v1 {
       }
       auto A6 = A4 * A2;
       d6 = std::pow(norm1(A6), 1.0/6);
-      const double d8 = std::pow(normest(A4, 2), 0.125);
+      const double d8 = std::pow(normest_simplified(A4, 2), 0.125);
       const double eta_3 = std::max(d6, d8);
       if(eta_3 < theta_7 + eps && ell(mat, 7) == 0){
         Matrix<T> u7 = mat * (b(7, 1) * A0 + b(7, 3) * A2 + b(7, 5) * A4 + b(7, 7) * A6);
@@ -141,7 +141,7 @@ namespace matrix { inline namespace v1 {
       std::size_t n = 1;
 
       while(n < max_n){
-        auto mat_norm1_approx = normest(mat, n);
+        auto mat_norm1_approx = normest_simplified(mat, n);
         if(mat_norm1_approx/factorial(n) <= eps){
           break;
         }

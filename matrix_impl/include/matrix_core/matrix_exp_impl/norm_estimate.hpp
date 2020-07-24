@@ -1,4 +1,6 @@
-namespace matrix { inline namespace v1 {
+namespace matrix { 
+
+inline namespace v1 {
   namespace exponential {
     template<typename T>
     void populateRandomOnesAndNegOnes(Matrix<T> &mat, size_t c)
@@ -94,6 +96,26 @@ namespace matrix { inline namespace v1 {
       return res;
     }
 
+    template<typename T>
+    double normest_simplified(const Matrix<T> &A, size_t m)
+    {
+      auto x = Matrix<T>(A.nrows(), 2);
+      const double n_norm = static_cast<double>(x.nrows());
+      for(size_t i = 0; i < x.nrows(); ++i){
+        x(i, 0) = 1/n_norm;
+      }
+      for(size_t i = 0; i < x.nrows(); ++i){
+        x(i, 1) = (i % 2 == 0) ? 1/n_norm : -1/n_norm;
+      }
+
+      Matrix<T> Y = A * x;   ///< Y is of dim n x 2
+      for(size_t i = 1; i < m; ++i){
+        Y = A * Y;
+      }
+      const double est1 = colNorm1(Y, 0);
+      const double est2 = colNorm1(Y, 1);
+      return std::max(est1, est2);
+    }
     /// Higham, Nicholas J., and Françoise Tisseur. "A block algorithm 
     /// for matrix 1-norm estimation, with an application to 1-norm 
     /// pseudospectra." SIAM Journal on Matrix Analysis and 
@@ -234,7 +256,8 @@ namespace matrix { inline namespace v1 {
     template<typename T>
     int ell(const Matrix<T> &A, size_t m)
     {
-      const double alpha = std::abs(c(2*m+1)) * normest(abs(A), 2*m+1)/norm1(A);
+      //const double alpha = std::abs(c(2*m+1)) * normest(abs(A), 2*m+1)/norm1(A);
+      const double alpha = std::abs(c(2*m+1)) * normest_simplified(abs(A), 2*m+1)/norm1(A);
       const double m_d = static_cast<double>(m);
       const double val = std::log2(alpha/eps) * 0.5 / m_d;
       int res = (int)std::max(std::ceil(val), 0.0);
