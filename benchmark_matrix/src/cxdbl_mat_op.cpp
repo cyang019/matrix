@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void mat_mat_mul(size_t n, size_t cnt)
+double mat_mat_mul(size_t n, size_t cnt)
 {
   using cxdbl = std::complex<double>;
   matrix::Matrix<cxdbl> mat1(n, n);
@@ -22,4 +22,5 @@ void mat_mat_mul(size_t n, size_t cnt)
   auto t2 = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
   cout << duration << " microseconds." << endl;
+  return static_cast<double>(duration);
 }
