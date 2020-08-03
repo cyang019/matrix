@@ -44,4 +44,9 @@ if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
+option(BUILD_BENCHMARK "build benchmark as well" ON)
+
+if(BUILD_BENCHMARK)
+  add_subdirectory(benchmark_matrix)
+endif()
 

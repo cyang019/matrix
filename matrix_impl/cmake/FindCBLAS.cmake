@@ -53,10 +53,10 @@ mark_as_advanced(CBLAS_INCLUDE_DIRS)
 
 # Finds the library
 find_library(CBLAS_LIBRARIES
-  NAMES cblas blas blis openblas accelerate
+  NAMES openblas cblas blas blis accelerate
   HINTS ${CBLAS_HINTS}
   PATH_SUFFIXES
-    lib lib64 lib/x86_64 lib/x64 lib/x86 lib/Win32 lib/import lib64/import
+    usr/lib lib lib64 lib/x86_64 lib/x64 lib/x86 lib/Win32 lib/import lib64/import
     openblas/lib blis/lib lib/atlas-base
     accelerate.framework
     Accelerate.framework/Versions/Current/Frameworks/vecLib.framework
