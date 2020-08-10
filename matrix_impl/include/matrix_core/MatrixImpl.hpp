@@ -632,13 +632,13 @@ namespace matrix { inline namespace v1 {
 #ifndef NDEBUG
       if (t_row >= m_nrows) {
         std::string err_msg = "row index " 
-          + std::to_string(t_row) + "for operator() is out of bound " 
+          + std::to_string(t_row) + " for operator() is out of bound " 
           + std::to_string(m_nrows) + ".";
         throw IndexOutOfBound(err_msg);
       }
       if (t_col >= m_ncols) {
         std::string err_msg = "col index " 
-          + std::to_string(t_col) + "for operator() is out of bound " 
+          + std::to_string(t_col) + " for operator() is out of bound " 
           + std::to_string(m_ncols) + ".";
         throw IndexOutOfBound(err_msg);
       }
@@ -653,13 +653,13 @@ namespace matrix { inline namespace v1 {
 #ifndef NDEBUG
       if (t_row >= m_nrows) {
         std::string err_msg = "row index " 
-          + std::to_string(t_row) + "for operator() is out of bound " 
+          + std::to_string(t_row) + " for operator() is out of bound " 
           + std::to_string(m_nrows) + ".";
         throw IndexOutOfBound(err_msg);
       }
       if (t_col >= m_ncols) {
         std::string err_msg = "col index " 
-          + std::to_string(t_col) + "for operator() is out of bound " 
+          + std::to_string(t_col) + " for operator() is out of bound " 
           + std::to_string(m_ncols) + ".";
         throw IndexOutOfBound(err_msg);
       }

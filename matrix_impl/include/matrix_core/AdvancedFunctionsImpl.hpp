@@ -344,7 +344,13 @@ namespace matrix { inline namespace v1 {
 
           for(size_t i = 0; i < n; ++i){
             const size_t r = ptr_ipiv[i] - 1; ///< starting with 1
-            //std::cout << "i = " << i << "; r = " << r << "\n";
+#ifndef NDEBUG 
+            if (r > B.nrows()) {
+              std::cout << "[linearSolveSq()] ptr_ipiv contains invalid numbers:\n";
+              std::cout << "[linearSolveSq()] i = " << i << "; r = " << r << "\n";
+              std::cout << "[linearSolveSq()] ptr_ipiv[i] = " << ptr_ipiv[i] << "\n";
+            }
+#endif
             for(size_t j = 0; j < nrhs; ++j){
               res(i, j) = B(r, j);
             }
