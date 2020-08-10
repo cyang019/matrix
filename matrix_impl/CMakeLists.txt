@@ -28,7 +28,7 @@ target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
-set(_possible_paths ${CMAKE_PREFIX_PATH}/include /usr/include /usr/local/include)
+set(_possible_paths ${CMAKE_PREFIX_PATH}/include /usr/include /usr/local/include /usr/include/x86_64-linux-gnu)
 
 if(USE_EMCC)
   #find_library(CBLAS ${CMAKE_CURRENT_LIST_DIR}/libopenblasp-r0.3.7.a)
