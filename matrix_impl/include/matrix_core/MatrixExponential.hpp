@@ -10,12 +10,21 @@ namespace matrix { inline namespace v1 {
     Matrix<T> exp(const Matrix<T> &mat)
     {
 #ifdef VERBOSE
-      std::cout << "mat:\n";
+      std::cout << "[exp()] mat:\n";
       std::cout << mat << "\n";
 #endif
       const auto A0 = identity<T>(mat.nrows());
+#ifndef NDEBUG
+      std::cout << "[exp()] A0:\n" << A0 << std::endl;
+#endif
       auto A2 = mat * mat;
+#ifndef NDEBUG
+      std::cout << "[exp()] A2:\n" << A2 << std::endl;
+#endif
       double d6 = std::pow(normest_simplified(A2, 3), 1.0/6);
+#ifndef NDEBUG
+      std::cout << "[exp()] d6:\n" << d6 << std::endl;
+#endif
       const double eta_1 = std::max(std::pow(normest_simplified(A2, 2), 0.25), d6);
       if(eta_1 < theta_3 + eps && ell(mat, 3) == 0){
         Matrix<T> u3 = mat * (b(3, 1) * A0 + b(3, 3) * A2);
@@ -26,6 +35,9 @@ namespace matrix { inline namespace v1 {
         return r3;
       }
       auto A4 = A2 * A2;
+#ifndef NDEBUG
+      std::cout << "[exp()] A4:\n" << A4 << std::endl;
+#endif
       const double d4 = std::pow(norm1(A4), 0.25);
       const double eta_2 = std::max(d4, d6);
       if(eta_2 < theta_5 + eps && ell(mat, 5) == 0){
@@ -37,6 +49,9 @@ namespace matrix { inline namespace v1 {
         return r5;
       }
       auto A6 = A4 * A2;
+#ifndef NDEBUG
+      std::cout << "[exp()] A6:\n" << A6 << std::endl;
+#endif
       d6 = std::pow(norm1(A6), 1.0/6);
       const double d8 = std::pow(normest_simplified(A4, 2), 0.125);
       const double eta_3 = std::max(d6, d8);
@@ -91,12 +106,27 @@ namespace matrix { inline namespace v1 {
       Matrix<T> u13 = A1 * (A6 * (b(13, 13) * A6 + b(13, 11) * A4 + b(13, 9) * A2) 
                            + b(13, 7) * A6 + b(13, 5) * A4 + b(13, 3) * A2
                            + b(13, 1) * A0);
+#ifndef NDEBUG
+      std::cout << "[exp()] u13:\n" << u13 << std::endl;
+#endif
       Matrix<T> v13 = A6 * (b(13, 12) * A6 + b(13, 10) * A4 + b(13, 8) * A2)
                     + b(13, 6) * A6 + b(13, 4) * A4 + b(13, 2) * A2 
                     + b(13, 0) * A0;
+#ifndef NDEBUG
+      std::cout << "[exp()] v13:\n" << v13 << std::endl;
+#endif
       Matrix<T> p13 = u13 + v13;
+#ifndef NDEBUG
+      std::cout << "[exp()] p13:\n" << p13 << std::endl;
+#endif
       Matrix<T> q13 = v13 - u13;
+#ifndef NDEBUG
+      std::cout << "[exp()] q13:\n" << q13 << std::endl;
+#endif
       Matrix<T> r13 = linearSolveSq(q13, p13);
+#ifndef NDEBUG
+      std::cout << "[exp()] r13:\n" << r13 << std::endl;
+#endif
       Matrix<T> res = pow(r13, std::pow(2, s));
 #ifdef VERBOSE
       std::cout << "b(13, 0):\n" << b(13, 0) << "\n";

@@ -631,7 +631,7 @@ namespace matrix { inline namespace v1 {
     {
 #ifndef NDEBUG
       if (t_row >= m_nrows || t_col >= m_ncols)
-        throw IndexOutOfBound("index out of bound.");
+        throw IndexOutOfBound("operator() index out of bound.");
 #endif
       const size_t idx = m_nrows * t_col + t_row;
       return m_data[idx];
@@ -642,7 +642,7 @@ namespace matrix { inline namespace v1 {
     {
 #ifndef NDEBUG
       if (t_row >= m_nrows || t_col >= m_ncols)
-        throw IndexOutOfBound("index out of bound.");
+        throw IndexOutOfBound("operator() index out of bound.");
 #endif
       const size_t idx = m_nrows * t_col + t_row;
       return m_data[idx];
