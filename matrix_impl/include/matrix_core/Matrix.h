@@ -206,6 +206,9 @@ namespace matrix {
           Matrix<T> inverse() const;
           Matrix<T>& inverseInplace();
 
+          // Print to format that is readily copied to python
+          void print() const;
+
           T* data();
           const T* data() const;
 

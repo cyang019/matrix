@@ -211,7 +211,7 @@ namespace matrix {
                 << 1000.0 * (t2 - t1)/CLOCKS_PER_SEC << std::endl;
 #endif
 
-      lwork = static_cast<int>(work[0].real());
+      lwork = static_cast<int>(work[0].real() + 1);
 #ifdef VERBOSE
       cout << "lwork: " << lwork << "\t"
 #endif

@@ -308,7 +308,7 @@ namespace matrix { inline namespace v1 {
         }
 
         // solve for A*x = B by minimizing 2-norm(abs(b - A*x))
-        std::pair<Matrix<cxdbl>, int> lstsq(const Matrix<cxdbl> &a, const Matrix<cxdbl> &b, double rcond=-1);
+        std::pair<Matrix<cxdbl>, int> lstsq(const Matrix<cxdbl> &a, const Matrix<cxdbl> &b, double rcond=1.0e-12);
 
         // solves for A * X = B
         template<typename T>
@@ -393,6 +393,11 @@ namespace matrix { inline namespace v1 {
             i <<= 1;
           }
           t1 = t1 + ratio * t1; ///< calculate outside the loop to avoid one extra ratio * ratio calculation
+#ifndef NDEBUG
+          if(std::isnan(t1(0,0).real()) || std::isnan(t1(0,0).imag())) {
+            std::cout << "[WARNING] geometricSum2Power saw NAN." << std::endl;
+          }
+#endif
           return t1;
         }
 

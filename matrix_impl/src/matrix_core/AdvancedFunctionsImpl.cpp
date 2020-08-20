@@ -45,7 +45,7 @@ namespace matrix {
       int info = 0;
 
       // least square problem
-      mat_zgelsy(m, n, nrhs, 
+      int status = mat_zgelsy(m, n, nrhs, 
           a_local.data(), lda, b_mat.get(), ldb, jpvt.get(), &rcond,
           &rank, &info);
 
@@ -55,7 +55,8 @@ namespace matrix {
           x(j, i) = b_mat[j + i * m];
         }
       }
-      return make_pair(std::move(x), info);
+      status = status || info;
+      return make_pair(std::move(x), status);
     }
   } // namespace v1
 } // namespace matrix

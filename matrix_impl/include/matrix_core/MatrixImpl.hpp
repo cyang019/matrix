@@ -778,6 +778,33 @@ namespace matrix { inline namespace v1 {
       throw NotImplementedError("Matrix Inverse not implemented.");
     }
 
+    template<typename T>
+    void Matrix<T>::print() const
+    {
+      std::cout << "\n[\n";
+      const auto ss = std::cout.precision();
+      std::cout.precision(16);
+      for(size_t i = 0; i < m_nrows; ++i){
+        std::cout << "  [";
+        size_t j = 0;
+        while(j+1 < m_ncols) {
+          if constexpr(is_complex<T>::value){
+            std::cout << this->operator()(i,j).real() << "+" << this->operator()(i,j).imag() << "j, ";
+          } else {
+            std::cout << this->operator()(i,j) << ", ";
+          }
+          ++j;
+        }
+        if constexpr(is_complex<T>::value){
+          std::cout << this->operator()(i,j).real() << "+" << this->operator()(i,j).imag() << "j],\n";
+        } else {
+          std::cout << this->operator()(i,j) << "],\n";
+        }
+      }
+      std::cout << "]" << std::endl;
+      std::cout.precision(ss);
+    }
+
     template<>
     inline
     Matrix<double>& Matrix<double>::inverseInplace()
