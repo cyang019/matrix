@@ -30,6 +30,14 @@ namespace matrix {
 
     int mat_dgetri(size_t n, double *A, size_t lda, int * ipiv, 
         int *info);
+
+    
+    int mat_zgetrf(size_t m, size_t n,
+        cxdbl *A, size_t lda,
+        int *ipiv, int *info);
+
+    int mat_zgetri(size_t n, cxdbl *A, size_t lda, int * ipiv, 
+        int *info);
   } // namespace v1
 } // namespace matrix
 

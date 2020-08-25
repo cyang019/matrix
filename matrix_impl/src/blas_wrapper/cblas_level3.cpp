@@ -5,9 +5,7 @@
 
 #include "cblas.h"
 
-#ifdef HAVE_APPLE_LAPACK
-  #include "clapack.h"
-#elif defined HAVE_CLAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
   #include "clapack.h"
 #elif defined HAVE_LAPACKE
   #include "lapacke.h"
@@ -68,7 +66,7 @@ namespace matrix {
       int i_m = (int)m;
       int i_n = (int)n;
       int i_lda = (int)lda;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       res = dgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_dgetrf(LAPACK_COL_MAJOR, i_m, i_n, A, i_lda, ipiv);
@@ -88,7 +86,7 @@ namespace matrix {
       int res = 0;
       int i_n = (int)n;
       int i_lda = (int)lda;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       // query lwork
       int lwork = -1;
       auto work = std::make_unique<double[]>(1);
@@ -100,6 +98,57 @@ namespace matrix {
       res = dgetri_(&i_n, A, &i_lda, ipiv, work.get(), &lwork, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_dgetri(LAPACK_COL_MAJOR, i_n, A, i_lda, ipiv);
+      res = *info;
+#endif
+      return res;
+    }
+
+    int mat_zgetrf(size_t m, size_t n,
+        cxdbl *A, size_t lda,
+        int *ipiv, int *info)
+    {
+#ifndef NDEBUG
+      if (m >= (size_t)int_max || n >= (size_t)int_max || lda >= (size_t)int_max) {
+        throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
+      }
+#endif
+
+      int res = 0;
+      int i_m = (int)m;
+      int i_n = (int)n;
+      int i_lda = (int)lda;
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
+      res = zgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
+#elif defined HAVE_LAPACKE
+      *info = LAPACKE_zgetrf(LAPACK_COL_MAJOR, i_m, i_n, A, i_lda, ipiv);
+      res = *info;
+#endif
+      return res;
+    }
+
+    int mat_zgetri(size_t n, cxdbl *A, size_t lda, int * ipiv, 
+        int *info)
+    {
+#ifndef NDEBUG
+      if (n >= (size_t)int_max || lda >= (size_t)int_max) {
+        throw IndexOutOfBound("Matrices dimensions need to be smaller than INT_MAX.");
+      }
+#endif
+      int res = 0;
+      int i_n = (int)n;
+      int i_lda = (int)lda;
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
+      // query lwork
+      int lwork = -1;
+      auto work = std::make_unique<cxdbl[]>(1);
+      res = zgetri_(&i_n, A, &i_lda, ipiv, work.get(), &lwork, info);
+      lwork = static_cast<int>(work[0]);
+      work = std::make_unique<cxdbl[]>(lwork);
+      // actual calculation
+      // inv(A)*L = inv(U)
+      res = zgetri_(&i_n, A, &i_lda, ipiv, work.get(), &lwork, info);
+#elif defined HAVE_LAPACKE
+      *info = LAPACKE_zgetri(LAPACK_COL_MAJOR, i_n, A, i_lda, ipiv);
       res = *info;
 #endif
       return res;

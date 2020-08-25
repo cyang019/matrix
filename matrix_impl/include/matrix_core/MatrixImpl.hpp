@@ -772,6 +772,32 @@ namespace matrix { inline namespace v1 {
       return result;
     }
 
+    template<>
+    inline
+    Matrix<std::complex<double>> Matrix<std::complex<double>>::inverse() const
+    {
+#ifndef NDEBUG
+      if(m_nrows != m_ncols){
+        throw MatrixSizeMismatchError("Row and column numbers need to be the same.");
+      }
+      if(m_nrows == 0){
+        throw MatrixSizeMismatchError("Row and column numbers cannot be zero.");
+      }
+#endif
+      auto ptr_ipiv = std::make_unique<int[]>(m_nrows);
+      int errorHandler;
+
+      Matrix<std::complex<double>> result = *this;
+      mat_zgetrf(m_nrows, m_ncols, result.m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
+      if(errorHandler > 0){
+        throw NonInvertibleMatrix("Matrix non-invertible.");
+      }
+
+      mat_zgetri(m_nrows, result.m_data.get(), m_nrows, ptr_ipiv.get(), &errorHandler);
+
+      return result;
+    }
+
     template<typename T>
     Matrix<T>& Matrix<T>::inverseInplace()
     {
