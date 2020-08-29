@@ -37,7 +37,7 @@ namespace matrix {
       int lower_dim_b = (ldb > 0) ? (int)ldb : 1;
 
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
       auto clpk_b = reinterpret_cast<__CLPK_doublecomplex *>(b);
       res = zgesv_(&dim1, &dim2, clpk_a, &lower_dim_a,
@@ -66,7 +66,7 @@ namespace matrix {
       int lower_dim_b = (ldb > 0) ? (int)ldb : 1;
 
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       res = dgesv_(&dim1, &dim2, a, &lower_dim_a,
           ipiv, b, &lower_dim_b, info);
 #elif defined HAVE_LAPACKE
@@ -100,7 +100,7 @@ namespace matrix {
       int lower_dim_b = (ldb > 0) ? (int)ldb : 1;
 
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
       auto clpk_b = reinterpret_cast<__CLPK_doublecomplex *>(b);
 
@@ -188,7 +188,7 @@ namespace matrix {
 #endif
 
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
       auto clpk_b = reinterpret_cast<__CLPK_doublecomplex *>(b);
 

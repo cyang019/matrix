@@ -27,7 +27,7 @@ namespace matrix {
       int lower_dim = (int)lda;
 
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       const size_t lwork = n > 0 ? (n+1) * n : 1;
       auto work = std::make_unique<cxdbl[]>(lwork);
       const size_t rwork_size = n > 0 ? 3 * n - 2 : 1;
@@ -56,7 +56,7 @@ namespace matrix {
 #endif
 
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       int dim = (int)n;
       int lower_dim = (int)lda;
       // query sizes
@@ -117,7 +117,7 @@ namespace matrix {
       int upper_idx = (int)iu;
 
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
       auto clpk_z = reinterpret_cast<__CLPK_doublecomplex *>(z);
 
@@ -174,7 +174,7 @@ namespace matrix {
       int dim = (int)n;
       int lower_dim = (int)lda;
       int res = 0;
-#ifdef HAVE_APPLE_LAPACK
+#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
       int lwork = -1;
       /// unique_ptr<cxdbl> a; a.get() directly
       auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(a);
