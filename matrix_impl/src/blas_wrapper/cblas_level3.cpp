@@ -118,7 +118,8 @@ namespace matrix {
       int i_n = (int)n;
       int i_lda = (int)lda;
 #if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
-      res = zgetrf_(&i_m, &i_n, A, &i_lda, ipiv, info);
+      auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(A);
+      res = zgetrf_(&i_m, &i_n, clpk_a, &i_lda, ipiv, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_zgetrf(LAPACK_COL_MAJOR, i_m, i_n, A, i_lda, ipiv);
       res = *info;
@@ -141,12 +142,15 @@ namespace matrix {
       // query lwork
       int lwork = -1;
       auto work = std::make_unique<cxdbl[]>(1);
-      res = zgetri_(&i_n, A, &i_lda, ipiv, work.get(), &lwork, info);
-      lwork = static_cast<int>(work[0]);
+      auto clpk_a = reinterpret_cast<__CLPK_doublecomplex *>(A);
+      auto clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work.get());
+      res = zgetri_(&i_n, clpk_a, &i_lda, ipiv, clpk_work, &lwork, info);
+      lwork = static_cast<int>(work[0].real());
       work = std::make_unique<cxdbl[]>(lwork);
+      clpk_work = reinterpret_cast<__CLPK_doublecomplex *>(work.get());
       // actual calculation
       // inv(A)*L = inv(U)
-      res = zgetri_(&i_n, A, &i_lda, ipiv, work.get(), &lwork, info);
+      res = zgetri_(&i_n, clpk_a, &i_lda, ipiv, clpk_work, &lwork, info);
 #elif defined HAVE_LAPACKE
       *info = LAPACKE_zgetri(LAPACK_COL_MAJOR, i_n, A, i_lda, ipiv);
       res = *info;
