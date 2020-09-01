@@ -12,7 +12,7 @@
 #endif
 
 #ifdef HAVE_CLAPACK
-typedef double __CLPK_doublereal
+typedef double __CLPK_doublereal;
 typedef struct { __CLPK_doublereal r, i; } __CLPK_doublecomplex;
 #endif
 
