@@ -2,6 +2,7 @@
 #include "blas_wrapper/cblas_level3.h"
 #include "matrix_core/errors.h"
 #include <complex>
+#include <memory>
 
 #include "cblas.h"
 

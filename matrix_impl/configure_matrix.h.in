@@ -11,6 +11,11 @@
 #define lapack_complex_double std::complex<double>
 #endif
 
+#ifdef HAVE_CLAPACK
+typedef double __CLPK_doublereal
+typedef struct { __CLPK_doublereal r, i; } __CLPK_doublecomplex;
+#endif
+
 
 #endif
 

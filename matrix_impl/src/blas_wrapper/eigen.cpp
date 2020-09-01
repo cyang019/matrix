@@ -10,6 +10,7 @@
 
 #include "blas_wrapper/eigen.h"
 #include "matrix_core/errors.h"
+#include <memory>
 
 
 namespace matrix {
