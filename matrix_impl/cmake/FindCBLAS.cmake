@@ -43,7 +43,7 @@ find_path(CBLAS_INCLUDE_DIRS
   HINTS ${CBLAS_HINTS}
   PATH_SUFFIXES
     include inc include/x86_64 include/x64
-    openblas/include include/blis blis/include blis/include/blis
+    include/blis blis/include blis/include/blis
     Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
     Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
   PATHS ${CBLAS_PATHS}
@@ -53,11 +53,11 @@ mark_as_advanced(CBLAS_INCLUDE_DIRS)
 
 # Finds the library
 find_library(CBLAS_LIBRARIES
-  NAMES openblas cblas blas blis accelerate
+  NAMES cblas blas blis accelerate
   HINTS ${CBLAS_HINTS}
   PATH_SUFFIXES
     usr/lib lib lib64 lib/x86_64 lib/x64 lib/x86 lib/Win32 lib/import lib64/import
-    openblas/lib blis/lib lib/atlas-base
+    blis/lib lib/atlas-base
     accelerate.framework
     Accelerate.framework/Versions/Current/Frameworks/vecLib.framework
   PATHS ${CBLAS_PATHS}
