@@ -180,7 +180,8 @@ set(CBLAS_PATHS
 find_path(CBLAS_INCLUDE_DIRS
   NAMES cblas.h
   PATH_SUFFIXES
-    include inc include/x86_64 include/x64
+    openblas/include
+    include inc include/x86_64 include/x64 include/x86_64-linux-gnu
     include/blis blis/include blis/include/blis
     Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
     Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
@@ -191,7 +192,8 @@ find_path(CBLAS_INCLUDE_DIRS
 find_path(LAPACKE_INCLUDE_DIRS
   NAMES lapacke.h
   PATH_SUFFIXES
-    include inc include/x86_64 include/x64
+    openblas/include
+    include inc include/x86_64 include/x64 include/x86_64-linux-gnu
     include/blis blis/include blis/include/blis
     Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
     Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
@@ -204,7 +206,8 @@ if(LAPACKE_INCLUDE_DIRS-NOTFOUND)
   find_path(CLAPACK_INCLUDE_DIRS REQUIRED
     NAMES clapack.h
     PATH_SUFFIXES
-      include inc include/x86_64 include/x64
+      openblas/include
+      include inc include/x86_64 include/x64 include/x86_64-linux-gnu
       include/blis blis/include blis/include/blis
       Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
       Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers

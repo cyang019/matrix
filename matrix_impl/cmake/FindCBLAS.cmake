@@ -42,6 +42,7 @@ find_path(CBLAS_INCLUDE_DIRS
   NAMES cblas.h
   HINTS ${CBLAS_HINTS}
   PATH_SUFFIXES
+    openblas/include
     include inc include/x86_64 include/x64
     include/blis blis/include blis/include/blis
     Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
