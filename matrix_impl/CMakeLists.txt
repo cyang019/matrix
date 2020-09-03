@@ -18,11 +18,6 @@ endif()
 
 message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 
-#if(USE_EMCC)
-#  target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror -emit-llvm --target=wasm32-unknown-unknown-elf -S)
-#else()
-#  target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic -Werror)
-#endif()
 target_compile_options(matrix PUBLIC -Wall -Wextra -Wpedantic)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -180,20 +175,21 @@ set(CBLAS_PATHS
 find_path(CBLAS_INCLUDE_DIRS
   NAMES cblas.h
   PATH_SUFFIXES
-    openblas/include
-    include inc include/x86_64 include/x64 include/x86_64-linux-gnu
+    openblas/include include/x86_64-linux-gnu
+    include inc include/x86_64 include/x64
     include/blis blis/include blis/include/blis
     Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
     Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
   PATHS ${CBLAS_PATHS}
   DOC "BLAS include header cblas.h"
 )
+message(STATUS "CBLAS_INCLUDE_DIRS => ${CBLAS_INCLUDE_DIRS}")
 
 find_path(LAPACKE_INCLUDE_DIRS
   NAMES lapacke.h
   PATH_SUFFIXES
-    openblas/include
-    include inc include/x86_64 include/x64 include/x86_64-linux-gnu
+    openblas/include include/x86_64-linux-gnu
+    include inc include/x86_64 include/x64 
     include/blis blis/include blis/include/blis
     Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
     Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
@@ -206,15 +202,15 @@ if(LAPACKE_INCLUDE_DIRS-NOTFOUND)
   find_path(CLAPACK_INCLUDE_DIRS REQUIRED
     NAMES clapack.h
     PATH_SUFFIXES
-      openblas/include
-      include inc include/x86_64 include/x64 include/x86_64-linux-gnu
+      openblas/include include/x86_64-linux-gnu
+      include inc include/x86_64 include/x64
       include/blis blis/include blis/include/blis
       Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
       Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
     PATHS ${CBLAS_PATHS}
     DOC "Netlib LAPACK include header clapack.h"
   )
-message(STATUS "CLAPACK_INCLUDE_DIRS => ${CLAPACK_INCLUDE_DIRS}")
+  message(STATUS "CLAPACK_INCLUDE_DIRS => ${CLAPACK_INCLUDE_DIRS}")
   option(HAVE_CLAPACK "CLAPACK" ON)
 else()
   option(HAVE_CLAPACK "CLAPACK" OFF)
@@ -227,30 +223,26 @@ if(APPLE)
 endif()
 
 
-message(STATUS "CBLAS_INCLUDE_DIRS => ${CBLAS_INCLUDE_DIRS}")
-message(STATUS "LAPACK_INCLUDE_DIRS => ${LAPACK_INCLUDE_DIRS}")
 message(STATUS "BLAS_LIBRARIES => ${BLAS_LIBRARIES}")
 message(STATUS "LAPACK_LIBRARIES => ${LAPACK_LIBRARIES}")
 
 if(HAVE_LAPACKE)
   target_include_directories(matrix
-    PRIVATE
-    "${BLAS_INCLUDE_DIRS}"
-    "${LAPACKE_INCLUDE_DIRS}"
     PUBLIC
+    "${CBLAS_INCLUDE_DIRS}"
+    "${LAPACKE_INCLUDE_DIRS}"
     "${CMAKE_CURRENT_LIST_DIR}/include"
   )
 else()
   target_include_directories(matrix
-    PRIVATE
-    "${BLAS_INCLUDE_DIRS}"
-    "${CLAPACK_INCLUDE_DIRS}"
     PUBLIC
+    "${CBLAS_INCLUDE_DIRS}"
+    "${CLAPACK_INCLUDE_DIRS}"
     "${CMAKE_CURRENT_LIST_DIR}/include"
   )
 endif()
 
-target_link_libraries(matrix PRIVATE ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 
 include("include/CMakeLists.txt")
 include("src/CMakeLists.txt")
