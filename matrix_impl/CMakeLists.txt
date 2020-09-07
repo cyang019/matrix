@@ -159,9 +159,6 @@ elseif(MSVC)
   set(BLA_VENDER Intel10_64lp)
 endif()
 
-find_package(BLAS REQUIRED)
-find_package(LAPACK REQUIRED)
-
 set(CBLAS_PATHS
   /usr/local
   /usr/local/opt
@@ -197,7 +194,22 @@ find_path(LAPACKE_INCLUDE_DIRS
   DOC "Netlib LAPACK include header lapacke.h"
 )
 
-if(LAPACKE_INCLUDE_DIRS-NOTFOUND)
+find_path(LAPACK_DIR
+  NAMES lapacke.h clapack.h
+  PATH_SUFFIXES
+    openblas/include include/x86_64-linux-gnu
+    include inc include/x86_64 include/x64 
+    include/blis blis/include blis/include/blis
+    Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/Current/Headers
+    Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers
+  PATHS ${CBLAS_PATHS}
+  DOC "Netlib LAPACK include header lapacke.h"
+)
+
+find_package(BLAS REQUIRED)
+find_package(LAPACK REQUIRED)
+
+if(NOT LAPACKE_INCLUDE_DIRS)
   option(HAVE_LAPACKE "LAPACKE" OFF)
   find_path(CLAPACK_INCLUDE_DIRS REQUIRED
     NAMES clapack.h
@@ -210,6 +222,9 @@ if(LAPACKE_INCLUDE_DIRS-NOTFOUND)
     PATHS ${CBLAS_PATHS}
     DOC "Netlib LAPACK include header clapack.h"
   )
+  if(NOT CLAPACK_INCLUDE_DIRS)
+    message(FATAL_ERROR "CLAPACK_INCLUDE_DIRS not found.")
+  endif()
   message(STATUS "CLAPACK_INCLUDE_DIRS => ${CLAPACK_INCLUDE_DIRS}")
   option(HAVE_CLAPACK "CLAPACK" ON)
 else()
@@ -228,21 +243,27 @@ message(STATUS "LAPACK_LIBRARIES => ${LAPACK_LIBRARIES}")
 
 if(HAVE_LAPACKE)
   target_include_directories(matrix
-    PUBLIC
+    PRIVATE
     "${CBLAS_INCLUDE_DIRS}"
     "${LAPACKE_INCLUDE_DIRS}"
+    PUBLIC
     "${CMAKE_CURRENT_LIST_DIR}/include"
   )
+
+  target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} lapacke)
 else()
   target_include_directories(matrix
-    PUBLIC
+    PRIVATE
     "${CBLAS_INCLUDE_DIRS}"
     "${CLAPACK_INCLUDE_DIRS}"
+    PUBLIC
     "${CMAKE_CURRENT_LIST_DIR}/include"
   )
+
+  target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} clapack)
 endif()
 
-target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+
 
 include("include/CMakeLists.txt")
 include("src/CMakeLists.txt")
