@@ -244,20 +244,20 @@ message(STATUS "LAPACK_LIBRARIES => ${LAPACK_LIBRARIES}")
 if(HAVE_LAPACKE)
   target_include_directories(matrix
     PRIVATE
-    "${CBLAS_INCLUDE_DIRS}"
-    "${LAPACKE_INCLUDE_DIRS}"
     PUBLIC
     "${CMAKE_CURRENT_LIST_DIR}/include"
+    "${CBLAS_INCLUDE_DIRS}"
+    "${LAPACKE_INCLUDE_DIRS}"
   )
 
   target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} lapacke)
 else()
   target_include_directories(matrix
     PRIVATE
-    "${CBLAS_INCLUDE_DIRS}"
-    "${CLAPACK_INCLUDE_DIRS}"
     PUBLIC
     "${CMAKE_CURRENT_LIST_DIR}/include"
+    "${CBLAS_INCLUDE_DIRS}"
+    "${CLAPACK_INCLUDE_DIRS}"
   )
 
   target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} clapack)
