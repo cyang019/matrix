@@ -250,7 +250,8 @@ if(HAVE_LAPACKE)
     "${LAPACKE_INCLUDE_DIRS}"
   )
 
-  target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} lapacke)
+#target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} lapacke)
+  target_link_libraries(matrix PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 else()
   target_include_directories(matrix
     PRIVATE
