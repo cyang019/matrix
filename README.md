@@ -1,4 +1,4 @@
 # matrix
-* A Simple BLAS Wrapper
+* A light-weighted BLAS Wrapper
 
 
