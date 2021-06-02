@@ -1,4 +1,4 @@
 # matrix
-* A light-weighted BLAS Wrapper
+* A BLAS/LAPACK Wrapper that focuses on quantum mechanical operations
 
 
