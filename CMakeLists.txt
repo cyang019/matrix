@@ -5,6 +5,10 @@ project (matrix
 
 message(STATUS "Project matrix...")
 
+if(MSVC)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
+
 if(NOT DEFINED CMAKE_CXX_STANDARD)
   message(STATUS "CPP standard - ${CMAKE_CXX_STANDARD}")
   set(CMAKE_CXX_STANDARD 17)
@@ -30,17 +34,17 @@ option(BUILD_TESTS "build unittests as well" ON)
 # Add sub-directories
 add_subdirectory(matrix_impl)
 
-include(cmake/googletest.cmake)
-if(NDEBUG)
-  include(cmake/CodeCoverage.cmake)
-endif()
-fetch_googletest(
-  ${PROJECT_SOURCE_DIR}/cmake
-  ${PROJECT_BINARY_DIR}/googletest
-  )
-
 if(BUILD_TESTS)
   enable_testing()
+  include(cmake/googletest.cmake)
+  if(NDEBUG)
+    include(cmake/CodeCoverage.cmake)
+  endif()
+  fetch_googletest(
+    ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_BINARY_DIR}/googletest
+    )
+
   add_subdirectory(tests)
 endif()
 

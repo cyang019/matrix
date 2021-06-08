@@ -1,5 +1,7 @@
 #include "configure_matrix.h"
-#ifdef HAVE_APPLE_LAPACK
+#ifdef MSVC
+#include "mkl_lapacke.h"
+#elif HAVE_APPLE_LAPACK
 #include "clapack.h"
 #elif defined HAVE_CLAPACK
 #include "clapack.h"

@@ -4,6 +4,7 @@
 #cmakedefine HAVE_APPLE_LAPACK
 #cmakedefine HAVE_CLAPACK
 #cmakedefine HAVE_LAPACKE
+#cmakedefine MSVC
 
 #ifdef HAVE_LAPACKE
 #include <complex>
@@ -15,7 +16,6 @@
 typedef double __CLPK_doublereal;
 typedef struct { __CLPK_doublereal r, i; } __CLPK_doublecomplex;
 #endif
-
 
 #endif
 

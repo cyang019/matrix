@@ -4,13 +4,21 @@
 #include <complex>
 #include <memory>
 
-#include "cblas.h"
-
-#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
-  #include "clapack.h"
-#elif defined HAVE_LAPACKE
-  #include "lapacke.h"
+#ifdef MSVC
+#include "mkl_cblas.h"
 #else
+#include "cblas.h"
+#endif
+
+#ifdef MSVC
+#include "mkl_lapacke.h"
+#else
+  #if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
+    #include "clapack.h"
+  #elif defined HAVE_LAPACKE
+    #include "lapacke.h"
+  #else
+  #endif
 #endif
 
 
