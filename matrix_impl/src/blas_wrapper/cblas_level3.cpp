@@ -4,9 +4,15 @@
 #include <complex>
 #include <memory>
 
+#ifdef MSVC
+#include "mkl_cblas.h"
+#else
 #include "cblas.h"
+#endif
 
-#if defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
+#ifdef MSVC
+#include "mkl_lapacke.h"
+#elif defined(HAVE_APPLE_LAPACK) || defined(HAVE_CLAPACK)
   #include "clapack.h"
 #elif defined HAVE_LAPACKE
   #include "lapacke.h"

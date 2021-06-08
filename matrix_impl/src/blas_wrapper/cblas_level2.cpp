@@ -1,5 +1,9 @@
 #include "configure_matrix.h"
+#ifdef MSVC
+#include "mkl_cblas.h"
+#else
 #include "cblas.h"
+#endif
 #include "blas_wrapper/cblas_level2.h"
 #include "matrix_core/errors.h"
 #include <stdexcept>

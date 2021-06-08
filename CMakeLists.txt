@@ -30,17 +30,16 @@ option(BUILD_TESTS "build unittests as well" ON)
 # Add sub-directories
 add_subdirectory(matrix_impl)
 
-include(cmake/googletest.cmake)
-if(NDEBUG)
-  include(cmake/CodeCoverage.cmake)
-endif()
-fetch_googletest(
-  ${PROJECT_SOURCE_DIR}/cmake
-  ${PROJECT_BINARY_DIR}/googletest
-  )
-
 if(BUILD_TESTS)
   enable_testing()
+  include(cmake/googletest.cmake)
+  if(NDEBUG)
+    include(cmake/CodeCoverage.cmake)
+  endif()
+  fetch_googletest(
+    ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_BINARY_DIR}/googletest
+    )
   add_subdirectory(tests)
 endif()
 

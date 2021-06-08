@@ -1,5 +1,9 @@
 #include "configure_matrix.h"
-#include "cblas.h"
+#ifdef MSVC
+  #include "mkl_cblas.h"
+#else
+  #include "cblas.h"
+#endif
 #include "blas_wrapper/cblas_level1.h"
 
 

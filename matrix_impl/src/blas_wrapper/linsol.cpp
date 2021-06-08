@@ -1,5 +1,7 @@
 #include "configure_matrix.h"
-#ifdef HAVE_APPLE_LAPACK
+#ifdef MSVC
+#include "mkl_lapacke.h"
+#elif defined HAVE_APPLE_LAPACK
 #include "clapack.h"
 #elif defined HAVE_CLAPACK
 #include "clapack.h"
@@ -183,8 +185,13 @@ namespace matrix {
       int lower_dim_a = (lda > 0) ? (int)lda : 1;
       int lower_dim_b = (ldb > 0) ? (int)ldb : 1;
 #ifndef NDEBUG
+#ifdef MSVC
+      assert(ldb >= std::max(1ull, std::max(m, n)));
+      assert(lda >= std::max(1ull, m));
+#else
       assert(ldb >= std::max(1ul, std::max(m, n)));
       assert(lda >= std::max(1ul, m));
+#endif
 #endif
 
       int res = 0;
